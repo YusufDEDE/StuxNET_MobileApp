@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "paths": {
+      "~/*": [
+        "./src/*"
+      ],
+      "res": [
+        "./res/"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
