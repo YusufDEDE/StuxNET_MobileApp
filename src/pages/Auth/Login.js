@@ -26,7 +26,7 @@ export default class Login extends React.Component {
     //     setSubmitting(false);
     //     setErrors({id: err.message});
     //   });
-    Actions.main({type: 'replace'});
+    Actions.home({type: 'replace'});
     setSubmitting(false);
   };
 

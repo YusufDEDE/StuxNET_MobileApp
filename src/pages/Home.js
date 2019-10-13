@@ -37,6 +37,7 @@ export default class HomeScreen extends React.Component {
         <Text style={styles.text}>Ana Ekran</Text>
         <Button title={'Show LightBox 1'} onPress={this.showAlert1} />
         <Button title={'Show LightBox 2'} onPress={this.showAlert2} />
+        <Button title={'Çıkış Yap'} onPress={Actions.auth} />
       </View>
     );
   }

@@ -29,8 +29,8 @@ export default class App extends React.Component {
           tintColor={colors.headerTint}
           headerTintColor={colors.headerTint}>
           <Lightbox key="lightbox" hideNavBar>
-            <Stack key="root" hideNavBar initial>
-              <Tabs icon={TabIcon} showLabel={false}>
+            <Stack key="main" hideNavBar>
+              <Tabs key={'auth'} icon={TabIcon} showLabel={false}>
                 <Scene
                   key={'login'}
                   component={Login}
@@ -44,9 +44,7 @@ export default class App extends React.Component {
                   hideNavBar
                 />
               </Tabs>
-              <Scene key={'main'} hideNavBar type={'popTo'}>
-                <Scene key={'home'} component={HomeScreen} type={'reset'} />
-              </Scene>
+
               <Scene
                 key="alert"
                 headerLayoutPreset="center"
@@ -57,6 +55,7 @@ export default class App extends React.Component {
                 headerLayoutPreset="center"
                 component={CustomAlert}
               />
+              <Scene key={'home'} component={HomeScreen} type={'reset'} />
             </Stack>
           </Lightbox>
         </Router>
