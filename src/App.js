@@ -1,8 +1,8 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import {Lightbox, Router, Scene, Tabs} from 'react-native-router-flux';
+import {Lightbox, Router, Scene, Tabs, Stack} from 'react-native-router-flux';
 import {TabIcon} from '~/components/navigation';
-import {Login, SignUp} from '~/pages';
+import {Login, SignUp, HomeScreen} from '~/pages';
 import {colors} from 'res';
 import {AlertLightBox} from '~/components/modals';
 import * as stores from '~/store';
@@ -29,30 +29,35 @@ export default class App extends React.Component {
           tintColor={colors.headerTint}
           headerTintColor={colors.headerTint}>
           <Lightbox key="lightbox" hideNavBar>
-            <Tabs icon={TabIcon} showLabel={false}>
+            <Stack key="root" hideNavBar initial>
+              <Tabs icon={TabIcon} showLabel={false}>
+                <Scene
+                  key={'login'}
+                  component={Login}
+                  iconName={'user'}
+                  hideNavBar
+                />
+                <Scene
+                  key={'signup'}
+                  component={SignUp}
+                  iconName={'sign-in'}
+                  hideNavBar
+                />
+              </Tabs>
+              <Scene key={'main'} hideNavBar type={'popTo'}>
+                <Scene key={'home'} component={HomeScreen} type={'reset'} />
+              </Scene>
               <Scene
-                key={'login'}
-                component={Login}
-                iconName={'home'}
-                hideNavBar
+                key="alert"
+                headerLayoutPreset="center"
+                component={AlertLightBox}
               />
               <Scene
-                key={'signup'}
-                component={SignUp}
-                iconName={'gear'}
-                hideNavBar
+                key="customAlert"
+                headerLayoutPreset="center"
+                component={CustomAlert}
               />
-            </Tabs>
-            <Scene
-              key="alert"
-              headerLayoutPreset="center"
-              component={AlertLightBox}
-            />
-            <Scene
-              key="customAlert"
-              headerLayoutPreset="center"
-              component={CustomAlert}
-            />
+            </Stack>
           </Lightbox>
         </Router>
       </Provider>

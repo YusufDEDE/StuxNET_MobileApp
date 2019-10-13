@@ -18,6 +18,7 @@
   "dependencies": {
     "apisauce": "^1.0.3",
     "babel-plugin-transform-flow-strip-types": "^6.22.0",
+    "formik": "^1.5.8",
     "mobx": "^5.11.0",
     "mobx-react": "5",
     "prop-types": "^15.7.2",
@@ -30,7 +31,8 @@
     "react-native-router-flux": "^4.0.6",
     "react-native-safe-area-view": "^0.14.6",
     "react-native-size-matters": "^0.2.1",
-    "react-native-vector-icons": "^6.6.0"
+    "react-native-vector-icons": "^6.6.0",
+    "yup": "^0.27.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",

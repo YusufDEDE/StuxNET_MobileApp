@@ -4,74 +4,179 @@ import React from 'react';
 import {ScrollView, View, StyleSheet} from 'react-native';
 import {Input, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {Actions} from 'react-native-router-flux';
+import * as yup from 'yup';
+import {Formik} from 'formik';
 import {colors} from 'res';
 
 export default class SignUp extends React.Component {
+  state = {
+    isVisible: true,
+  };
+
+  handleSubmit = ({id, password}, {setErrors, setSubmitting}) => {
+    console.warn('onsubmit');
+    // this.props.rootStore.authStore
+    //   .login(id, password)
+    //   .then(() => {
+    //     Actions.mainPage();
+    //     setSubmitting(false);
+    //   })
+    //   .catch(err => {
+    //     setSubmitting(false);
+    //     setErrors({id: err.message});
+    //   });
+    Actions.main();
+    setSubmitting(false);
+  };
   render() {
     return (
-      <ScrollView style={styles.container}>
-        <View style={styles.inputBox}>
-          <Input
-            label={'Kimlik No'}
-            labelStyle={{color: 'red'}}
-            placeholder="11122233344"
-            keyboardType={'numeric'}
-            leftIcon={<Icon name="id-card" size={24} color="black" />}
-            leftIconContainerStyle={{left: -13}}
-          />
-          <Input
-            label={'Şifre'}
-            labelStyle={{color: 'red'}}
-            placeholder="******"
-            leftIcon={<Icon name="key" size={24} color="black" />}
-            leftIconContainerStyle={{left: -13}}
-            containerStyle={{marginTop: 30}}
-          />
-          <Input
-            label={'Şifre Tekrar'}
-            labelStyle={{color: 'red'}}
-            placeholder="******"
-            leftIcon={<Icon name="key" size={24} color="black" />}
-            leftIconContainerStyle={{left: -13}}
-            containerStyle={{marginTop: 30}}
-          />
-          <Input
-            label={'Ad-Soyad'}
-            labelStyle={{color: 'red'}}
-            placeholder="******"
-            leftIcon={<Icon name="user" size={24} color="black" />}
-            leftIconContainerStyle={{left: -13}}
-            containerStyle={{marginTop: 30}}
-          />
-          <Input
-            label={'Adres'}
-            labelStyle={{color: 'red'}}
-            placeholder="******"
-            leftIcon={<Icon name="map" size={24} color="black" />}
-            leftIconContainerStyle={{left: -13}}
-            containerStyle={{marginTop: 30}}
-          />
-          <Input
-            label={'Telefon'}
-            labelStyle={{color: 'red'}}
-            placeholder="******"
-            leftIcon={<Icon name="phone" size={24} color="black" />}
-            leftIconContainerStyle={{left: -13}}
-            containerStyle={{marginTop: 30}}
-          />
-        </View>
-        <View style={styles.buttonBox}>
-          <Button
-            title="Kayıt Ol"
-            type="outline"
-            containerStyle={{
-              width: 200,
-              backgroundColor: colors.secondaryDark,
-              marginBottom: 50,
-            }}
-            titleStyle={{color: 'white'}}
-          />
-        </View>
+      <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+        <Formik
+          onSubmit={this.handleSubmit}
+          validationSchema={yup.object().shape({
+            id: yup
+              .number('bu alana sayı girilmelidir.')
+              .required('bu alan boş geçilemez')
+              .moreThan(9999999999, 'Kimlik Numarası uygun değil!')
+              .lessThan(100000000000, 'Kimlik Numarası uygun değil!'),
+            password: yup
+              .string('bu alan boş geçilemez')
+              .min(6, 'şifre minimum 6 karakter içermelidir')
+              .max(12, 'şifre maximum 12 karakter içerebilir')
+              .required('bu alan boş geçilemez'),
+            repassword: yup
+              .string()
+              .oneOf([yup.ref('password'), null], 'Şifreler Aynı Olmalı!'),
+            phone: yup
+              .number('bu alana sayı girilmelidir.')
+              .required('bu alan boş geçilemez')
+              .moreThan(5320000000, 'Telefon numarası geçersiz')
+              .lessThan(5559999999, 'Telefon numarası geçersiz'),
+          })}>
+          {props => (
+            <React.Fragment>
+              <View style={styles.inputBox}>
+                <Input
+                  label={'Kimlik No'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="11122233344"
+                  keyboardType={'numeric'}
+                  leftIcon={<Icon name="id-card" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  onChangeText={props.handleChange('id')}
+                  onBlur={props.handleBlur('id')}
+                  value={props.values.id}
+                  errorMessage={
+                    props.touched.id && props.errors.id ? props.errors.id : null
+                  }
+                />
+                <Input
+                  label={'Şifre'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="******"
+                  leftIcon={<Icon name="key" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  containerStyle={{marginTop: 30}}
+                  rightIcon={
+                    <Icon
+                      name={this.state.isVisible ? 'eye-slash' : 'eye'}
+                      size={24}
+                      color="black"
+                      onPress={() =>
+                        this.setState({isVisible: !this.state.isVisible})
+                      }
+                    />
+                  }
+                  secureTextEntry={this.state.isVisible}
+                  onChangeText={props.handleChange('password')}
+                  onBlur={props.handleBlur('password')}
+                  value={props.values.password}
+                  errorMessage={
+                    props.touched.password && props.errors.password
+                      ? props.errors.password
+                      : null
+                  }
+                />
+                <Input
+                  label={'Şifre Tekrar'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="******"
+                  leftIcon={<Icon name="key" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  containerStyle={{marginTop: 30}}
+                  rightIcon={
+                    <Icon
+                      name={this.state.isVisible ? 'eye-slash' : 'eye'}
+                      size={24}
+                      color="black"
+                      onPress={() =>
+                        this.setState({isVisible: !this.state.isVisible})
+                      }
+                    />
+                  }
+                  secureTextEntry={this.state.isVisible}
+                  onChangeText={props.handleChange('repassword')}
+                  onBlur={props.handleBlur('repassword')}
+                  value={props.values.repassword}
+                  errorMessage={
+                    props.touched.repassword && props.errors.repassword
+                      ? props.errors.repassword
+                      : null
+                  }
+                />
+                <Input
+                  label={'Ad-Soyad'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="******"
+                  leftIcon={<Icon name="user" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  containerStyle={{marginTop: 30}}
+                />
+                <Input
+                  label={'Adres'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="******"
+                  leftIcon={<Icon name="map" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  containerStyle={{marginTop: 30}}
+                />
+                <Input
+                  label={'Telefon'}
+                  keyboardType={'numeric'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="5356667711"
+                  leftIcon={<Icon name="phone" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  containerStyle={{marginTop: 30}}
+                  onChangeText={props.handleChange('phone')}
+                  onBlur={props.handleBlur('phone')}
+                  value={props.values.phone}
+                  errorMessage={
+                    props.touched.phone && props.errors.phone
+                      ? props.errors.phone
+                      : null
+                  }
+                />
+                <View style={styles.buttonBox}>
+                  <Button
+                    title="Kayıt Ol"
+                    type="outline"
+                    containerStyle={{
+                      width: 200,
+                      backgroundColor: colors.secondaryDark,
+                      marginBottom: 50,
+                    }}
+                    titleStyle={{color: 'white'}}
+                    onPress={props.handleSubmit}
+                    loading={props.isSubmitting}
+                    disabled={!props.isValid}
+                  />
+                </View>
+              </View>
+            </React.Fragment>
+          )}
+        </Formik>
       </ScrollView>
     );
   }

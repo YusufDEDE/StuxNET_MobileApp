@@ -34,7 +34,7 @@ export default class HomeScreen extends React.Component {
           source={images.logo}
           style={styles.image}
         />
-        <Text style={styles.text}>Starter Kit</Text>
+        <Text style={styles.text}>Ana Ekran</Text>
         <Button title={'Show LightBox 1'} onPress={this.showAlert1} />
         <Button title={'Show LightBox 2'} onPress={this.showAlert2} />
       </View>
