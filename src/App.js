@@ -1,8 +1,26 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import {Lightbox, Router, Scene, Tabs, Stack} from 'react-native-router-flux';
+import {
+  Lightbox,
+  Router,
+  Scene,
+  Tabs,
+  Stack,
+  Drawer,
+} from 'react-native-router-flux';
 import {TabIcon} from '~/components/navigation';
-import {Login, SignUp, HomeScreen} from '~/pages';
+import {
+  Login,
+  SignUp,
+  HomeScreen,
+  OpenAccount,
+  ListAccount,
+  CloseAccount,
+  DepositMoney,
+  TakeMoney,
+} from '~/pages';
+import DrawerContent from '~/drawer/DrawerContent';
+import NavBar from '~/components/navigation/NavBar';
 import {colors} from 'res';
 import {AlertLightBox} from '~/components/modals';
 import * as stores from '~/store';
@@ -55,7 +73,29 @@ export default class App extends React.Component {
                 headerLayoutPreset="center"
                 component={CustomAlert}
               />
-              <Scene key={'home'} component={HomeScreen} type={'reset'} />
+              <Drawer
+                key="drawer"
+                type="replace"
+                hideNavBar
+                contentComponent={DrawerContent}
+                drawerPosition="left"
+                drawerWidth={280}
+                navBar={NavBar}>
+                <Scene key={'home'} component={HomeScreen} type={'reset'} />
+                <Scene key={'openAccount'} component={OpenAccount} hideNavBar />
+                <Scene key={'listAccount'} component={ListAccount} hideNavBar />
+                <Scene
+                  key={'closeAccount'}
+                  component={CloseAccount}
+                  hideNavBar
+                />
+                <Scene
+                  key={'depositMoney'}
+                  component={DepositMoney}
+                  hideNavBar
+                />
+                <Scene key={'takeMoney'} component={TakeMoney} hideNavBar />
+              </Drawer>
             </Stack>
           </Lightbox>
         </Router>

@@ -15,7 +15,6 @@ export default class Login extends React.Component {
   };
 
   handleSubmit = ({id, password}, {setErrors, setSubmitting}) => {
-    console.warn('onsubmit');
     // this.props.rootStore.authStore
     //   .login(id, password)
     //   .then(() => {

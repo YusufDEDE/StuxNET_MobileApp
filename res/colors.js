@@ -27,5 +27,7 @@ const colors = {
   background: '#F5FCFF',
   lightGray: '#a9aeb2',
   secondaryDark: '#747474',
+  white: '#FFFFFF',
+  cyprus: '#0A2033',
 };
 export default colors;
