@@ -7,6 +7,8 @@ import ListAccount from './Account/ListAccount';
 import CloseAccount from './Account/CloseAccount';
 import DepositMoney from './Money/DepositMoney';
 import TakeMoney from './Money/TakeMoney';
+import Havale from './Money/Havale';
+import Virman from './Money/Virman';
 
 export {
   HomeScreen,
@@ -18,4 +20,6 @@ export {
   CloseAccount,
   DepositMoney,
   TakeMoney,
+  Havale,
+  Virman,
 };

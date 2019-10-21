@@ -18,6 +18,8 @@ import {
   CloseAccount,
   DepositMoney,
   TakeMoney,
+  Havale,
+  Virman,
 } from '~/pages';
 import DrawerContent from '~/drawer/DrawerContent';
 import NavBar from '~/components/navigation/NavBar';
@@ -82,19 +84,13 @@ export default class App extends React.Component {
                 drawerWidth={280}
                 navBar={NavBar}>
                 <Scene key={'home'} component={HomeScreen} type={'reset'} />
-                <Scene key={'openAccount'} component={OpenAccount} hideNavBar />
-                <Scene key={'listAccount'} component={ListAccount} hideNavBar />
-                <Scene
-                  key={'closeAccount'}
-                  component={CloseAccount}
-                  hideNavBar
-                />
-                <Scene
-                  key={'depositMoney'}
-                  component={DepositMoney}
-                  hideNavBar
-                />
-                <Scene key={'takeMoney'} component={TakeMoney} hideNavBar />
+                <Scene key={'openAccount'} component={OpenAccount} />
+                <Scene key={'listAccount'} component={ListAccount} />
+                <Scene key={'closeAccount'} component={CloseAccount} />
+                <Scene key={'depositMoney'} component={DepositMoney} />
+                <Scene key={'takeMoney'} component={TakeMoney} />
+                <Scene key={'havale'} component={Havale} />
+                <Scene key={'virman'} component={Virman} />
               </Drawer>
             </Stack>
           </Lightbox>

@@ -60,6 +60,8 @@ class DrawerContent extends React.Component {
             <CollapseBody>
               <MenuItem text="Para Yatır" scene="takeMoney" />
               <MenuItem text="Para Çek" scene="depositMoney" />
+              <MenuItem text="Havale" scene="havale" />
+              <MenuItem text="Virman" scene="virman" />
             </CollapseBody>
           </Collapse>
         </View>

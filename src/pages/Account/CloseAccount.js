@@ -6,6 +6,9 @@ import {fonts, colors} from 'res';
 import {Actions} from 'react-native-router-flux';
 
 export default class CloseAccount extends React.Component {
+  state={
+    account: '1111111',
+  }
   onPress = () => {
     Alert.alert(
       'Hesap Kapatıldı.',
@@ -22,7 +25,11 @@ export default class CloseAccount extends React.Component {
         <Text style={styles.text}>Hesap Kapat</Text>
         <View>
           <Text>Hesap Seçiniz</Text>
-          <View style={styles.pickerStyle}>
+          <View style={styles.pickerStyle}
+          selectedValue={this.state.account}
+          onValueChange={(itemValue, itemIndex) =>
+  this.setState({account: itemValue})
+}>
             <Picker>
               <Picker.Item label="11111111" value="bireysel" />
               <Picker.Item label="22222222" value="kurumsal" />
