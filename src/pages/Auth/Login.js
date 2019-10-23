@@ -6,6 +6,7 @@ import {Input, Button, Text} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import * as yup from 'yup';
+import Api from '~/api';
 import {Formik} from 'formik';
 import {colors} from 'res';
 
@@ -25,7 +26,17 @@ export default class Login extends React.Component {
     //     setSubmitting(false);
     //     setErrors({id: err.message});
     //   });
-    Actions.home({type: 'replace'});
+    Api.Auth.login({
+      tcNumber: id,
+      pass: password,
+    })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    //Actions.home({type: 'replace'});
     setSubmitting(false);
   };
 

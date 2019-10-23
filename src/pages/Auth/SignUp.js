@@ -6,6 +6,7 @@ import {Input, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import * as yup from 'yup';
+import Api from '~/api';
 import {Formik} from 'formik';
 import {colors} from 'res';
 
@@ -14,7 +15,10 @@ export default class SignUp extends React.Component {
     isVisible: true,
   };
 
-  handleSubmit = ({id, password}, {setErrors, setSubmitting}) => {
+  handleSubmit = (
+    {id, password, phone, email, adress, date, name, surname},
+    {setErrors, setSubmitting}
+  ) => {
     console.warn('onsubmit');
     // this.props.rootStore.authStore
     //   .login(id, password)
@@ -26,7 +30,27 @@ export default class SignUp extends React.Component {
     //     setSubmitting(false);
     //     setErrors({id: err.message});
     //   });
-    Actions.main();
+    //Actions.main();
+
+    Api.Auth.register({
+      tcNumber: id,
+      pass: password,
+      firstName: name,
+      lastName: surname,
+      birthdate: date,
+      adress: adress,
+      phone: phone,
+      mail: email,
+    })
+      .then(() => {
+        Actions.login();
+        setSubmitting(false);
+      })
+      .catch(() => {
+        console.warn('hata!');
+        setSubmitting(false);
+      });
+
     setSubmitting(false);
   };
   render() {
@@ -136,6 +160,9 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  onChangeText={props.handleChange('name')}
+                  onBlur={props.handleBlur('name')}
+                  value={props.values.name}
                 />
                 <Input
                   label={'Soyad'}
@@ -144,6 +171,9 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  onChangeText={props.handleChange('surname')}
+                  onBlur={props.handleBlur('surname')}
+                  value={props.values.surname}
                 />
                 <Input
                   label={'Adres'}
@@ -152,6 +182,9 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="map" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  onChangeText={props.handleChange('adress')}
+                  onBlur={props.handleBlur('adress')}
+                  value={props.values.adress}
                 />
                 <Input
                   label={'Mail'}
@@ -168,6 +201,17 @@ export default class SignUp extends React.Component {
                       ? props.errors.email
                       : null
                   }
+                />
+                <Input
+                  label={'Doğum Tarihi'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="2011/11/11"
+                  leftIcon={<Icon name="user" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  containerStyle={{marginTop: 30}}
+                  onChangeText={props.handleChange('date')}
+                  onBlur={props.handleBlur('date')}
+                  value={props.values.date}
                 />
                 <Input
                   label={'Telefon'}
