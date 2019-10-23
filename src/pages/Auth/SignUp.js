@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {ScrollView, View, StyleSheet} from 'react-native';
+import {ScrollView, View, StyleSheet, Alert} from 'react-native';
 import {Input, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
@@ -44,10 +44,11 @@ export default class SignUp extends React.Component {
     })
       .then(() => {
         Actions.login();
+        Alert.alert('Kayıt olma başarılı.', 'giriş yapabilirsiniz..');
         setSubmitting(false);
       })
       .catch(() => {
-        console.warn('hata!');
+        Alert.alert('Kayıt olma başarısız!.', 'lütfen tekrar deneyiniz..');
         setSubmitting(false);
       });
 

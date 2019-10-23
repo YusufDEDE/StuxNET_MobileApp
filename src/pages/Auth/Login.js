@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {View, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Input, Button, Text} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
@@ -31,9 +31,11 @@ export default class Login extends React.Component {
       pass: password,
     })
       .then(res => {
+        Alert.alert('giriş başarılı.', 'hoşgeldin :)');
         console.log(res);
       })
       .catch(err => {
+        Alert.alert('giriş başarısız.', 'takrar deneyiniz..');
         console.log(err);
       });
     //Actions.home({type: 'replace'});
