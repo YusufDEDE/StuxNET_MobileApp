@@ -3,19 +3,64 @@ import React from 'react';
 import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
 import {Button} from 'react-native-elements';
 import {fonts, colors} from 'res';
+import {inject, observer} from 'mobx-react';
+import Api from '~/api';
 import {Actions} from 'react-native-router-flux';
 
-export default class CloseAccount extends React.Component {
+@inject('authStore')
+@observer
+class CloseAccount extends React.Component {
   state={
-    account: '1111111',
+    money: '',
+    accounts: [],
+  }
+  componentDidMount(){
+    const { user } = this.props.authStore;
+    Api.Auth.listAccount({
+      tc: user,
+    }).then(res => {
+      this.setState({
+accounts: res,
+      });
+      this.state.accounts.map((item) => {
+
+        console.log(item.Balance);
+                    });
+
+    })
+    .catch(err => {
+      console.log(err);
+    });
   }
   onPress = () => {
-    Alert.alert(
-      'Hesap Kapatıldı.',
-      'Hesap başarıyla kapatıldı. Bankamızı kullandığınız için teşekkürler.'
-    );
-    Actions.pop();
+    const { user } = this.props.authStore;
+    Api.Auth.deleteAccount({
+      tc: user,
+    })
+      .then(res => {
+        console.log(res);
+        Alert.alert(
+          'Hesap Kapatıldı.',
+          'Hesap başarıyla kapatıldı. Bankamızı kullandığınız için teşekkürler.'
+        );
+        Actions.pop();
+      })
+      .catch(err => {
+        Alert.alert('işlem başarısız.', 'takrar deneyiniz..');
+        console.log(err);
+      });
   };
+
+  renderPicker() {
+    if (this.state.accounts === undefined) {
+        return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
+    }
+        return (
+            this.state.accounts.map((item,index) => {
+                return <Picker.Item key={'index.toString()'} label={'index'} value={item.Balance } />;
+            })
+        );
+}
 
   render() {
     return (
@@ -24,19 +69,14 @@ export default class CloseAccount extends React.Component {
 
         <Text style={styles.text}>Hesap Kapat</Text>
         <View>
-          <Text>Hesap Seçiniz</Text>
+          <Text>{this.state.money ?  'Bakiye: ' + this.state.money + '₺'  : 'Hesap Seçiniz'}</Text>
           <View style={styles.pickerStyle}
-          selectedValue={this.state.account}
+         >
+            <Picker  selectedValue={this.state.account}
           onValueChange={(itemValue, itemIndex) =>
-  this.setState({account: itemValue})
+  this.setState({money: itemValue})
 }>
-            <Picker>
-              <Picker.Item label="11111111" value="bireysel" />
-              <Picker.Item label="22222222" value="kurumsal" />
-              <Picker.Item label="33333333" value="kurumsal" />
-              <Picker.Item label="44444444" value="kurumsal" />
-              <Picker.Item label="55555555" value="kurumsal" />
-              <Picker.Item label="66666666" value="kurumsal" />
+              {this.renderPicker()}
             </Picker>
           </View>
         </View>
@@ -45,6 +85,8 @@ export default class CloseAccount extends React.Component {
     );
   }
 }
+
+export default CloseAccount;
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'space-evenly', alignItems: 'center'},

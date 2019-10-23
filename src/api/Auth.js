@@ -11,3 +11,15 @@ export function register(data) {
 export function forgotPassword(data) {
   return request('post', 'auth/forgot', data);
 }
+
+export function newAccount(data) {
+  return request('post', 'account/newAccount', data);
+}
+
+export function deleteAccount(data) {
+  return request('post', 'account/deleteAccount', data);
+}
+
+export function listAccount(data) {
+  return request('post', 'account/', data);
+}

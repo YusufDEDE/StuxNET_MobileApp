@@ -5,12 +5,15 @@ import {View, StyleSheet, TouchableOpacity, Alert} from 'react-native';
 import {Input, Button, Text} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
+import {inject, observer} from 'mobx-react';
 import * as yup from 'yup';
 import Api from '~/api';
 import {Formik} from 'formik';
 import {colors} from 'res';
 
-export default class Login extends React.Component {
+@inject('authStore')
+@observer
+class Login extends React.Component {
   state = {
     isVisible: true,
   };
@@ -26,13 +29,14 @@ export default class Login extends React.Component {
     //     setSubmitting(false);
     //     setErrors({id: err.message});
     //   });
+    this.props.authStore.setUser(id);
     Api.Auth.login({
       tcNumber: id,
       pass: password,
     })
       .then(res => {
         Alert.alert('giriş başarılı.', 'hoşgeldin :)');
-        console.log(res);
+        Actions.home({type: 'replace', token: res.token});
       })
       .catch(err => {
         Alert.alert('giriş başarısız.', 'takrar deneyiniz..');
@@ -128,6 +132,8 @@ export default class Login extends React.Component {
     );
   }
 }
+
+export default Login;
 
 const styles = StyleSheet.create({
   container: {

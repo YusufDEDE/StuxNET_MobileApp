@@ -1,4 +1,4 @@
-import { observable, action } from 'mobx';
+import {observable, action} from 'mobx';
 
 class AuthStore {
   @observable authToken;
@@ -11,11 +11,13 @@ class AuthStore {
 
   @action
   setUser = user => {
+    console.log(user);
     this.user = user;
   };
 
   @action
   setAuthToken = session => {
+    console.log(session);
     this.authToken = session;
   };
 
@@ -29,4 +31,4 @@ class AuthStore {
 const authStore = new AuthStore();
 
 export default authStore;
-export { AuthStore };
+export {AuthStore};

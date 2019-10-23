@@ -3,15 +3,29 @@ import React from 'react';
 import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
 import {Button} from 'react-native-elements';
 import {fonts, colors} from 'res';
+import {inject, observer} from 'mobx-react';
+import Api from '~/api';
 import {Actions} from 'react-native-router-flux';
 
-export default class OpenAccount extends React.Component {
+@inject('authStore')
+@observer
+class OpenAccount extends React.Component {
   onPress = () => {
-    Alert.alert(
-      'Hesap Oluştuma Başarılı!',
-      'hesap başarıyla oluşturuldu. hesap numaranız: 123132131'
-    );
-    Actions.pop();
+    const { user } = this.props.authStore;
+    Api.Auth.newAccount({
+      tc: user,
+    })
+      .then(res => {
+        console.log(res);
+        Alert.alert(
+          'Hesap Oluştuma Başarılı!'
+        );
+        Actions.pop();
+      })
+      .catch(err => {
+        Alert.alert('giriş başarısız.', 'takrar deneyiniz..');
+        console.log(err);
+      });
   };
 
   render() {
@@ -34,6 +48,8 @@ export default class OpenAccount extends React.Component {
     );
   }
 }
+
+export default OpenAccount;
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'space-evenly', alignItems: 'center'},
