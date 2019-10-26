@@ -1,4 +1,4 @@
-/* eslint-disable prettier/prettier */
+/* eslint-disable react/no-did-mount-set-state */
 import React from 'react';
 import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
 import {Button} from 'react-native-elements';
@@ -10,40 +10,30 @@ import {Actions} from 'react-native-router-flux';
 @inject('authStore')
 @observer
 class CloseAccount extends React.Component {
-  state={
-    money: '',
+  state = {
     accounts: [],
-  }
-  componentDidMount(){
-    const { user } = this.props.authStore;
-    Api.Auth.listAccount({
-      tc: user,
-    }).then(res => {
-      this.setState({
-accounts: res,
-      });
-      this.state.accounts.map((item) => {
-
-        console.log(item.Balance);
-                    });
-
-    })
-    .catch(err => {
-      console.log(err);
+    account: -1,
+  };
+  componentDidMount() {
+    this.setState({
+      accounts: this.props.authStore.accounts,
     });
   }
   onPress = () => {
-    const { user } = this.props.authStore;
+    const {accounts, account} = this.state;
+    const {user, setAccountList} = this.props.authStore;
     Api.Auth.deleteAccount({
       tc: user,
+      additNo: accounts[account].additionalNo,
     })
       .then(res => {
-        console.log(res);
+        console.log('del' + res);
         Alert.alert(
           'Hesap Kapatıldı.',
           'Hesap başarıyla kapatıldı. Bankamızı kullandığınız için teşekkürler.'
         );
         Actions.pop();
+        setAccountList(user);
       })
       .catch(err => {
         Alert.alert('işlem başarısız.', 'takrar deneyiniz..');
@@ -53,29 +43,38 @@ accounts: res,
 
   renderPicker() {
     if (this.state.accounts === undefined) {
-        return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
+      return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
     }
-        return (
-            this.state.accounts.map((item,index) => {
-                return <Picker.Item key={'index.toString()'} label={'index'} value={item.Balance } />;
-            })
-        );
-}
+    return this.state.accounts.map((item, index) => {
+      return (
+        <Picker.Item
+          key={index.toString()}
+          label={item.accNo + ' - ' + item.additionalNo}
+          value={index}
+        />
+      );
+    });
+  }
 
   render() {
+    const {accounts, account} = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
 
         <Text style={styles.text}>Hesap Kapat</Text>
         <View>
-          <Text>{this.state.money ?  'Bakiye: ' + this.state.money + '₺'  : 'Hesap Seçiniz'}</Text>
-          <View style={styles.pickerStyle}
-         >
-            <Picker  selectedValue={this.state.account}
-          onValueChange={(itemValue, itemIndex) =>
-  this.setState({money: itemValue})
-}>
+          <Text>
+            {account > -1
+              ? 'Bakiye: ' + accounts[account].Balance
+              : 'Hesap Seçiniz'}
+          </Text>
+          <View style={styles.pickerStyle}>
+            <Picker
+              selectedValue={this.state.account}
+              onValueChange={(itemValue, itemIndex) =>
+                this.setState({account: itemValue})
+              }>
               {this.renderPicker()}
             </Picker>
           </View>

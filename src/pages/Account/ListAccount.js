@@ -1,48 +1,13 @@
 import React from 'react';
 import {View, StyleSheet, StatusBar, FlatList, Text} from 'react-native';
 import {Button, ListItem} from 'react-native-elements';
+import {inject, observer} from 'mobx-react';
 import {fonts, colors} from 'res';
 
-export default class OpenAccount extends React.Component {
+@inject('authStore')
+@observer
+class ListAccount extends React.Component {
   state = {
-    listData: [
-      {
-        number: '123213213213',
-        name: 'mehmet',
-      },
-      {
-        number: '65784123213213',
-        name: 'mehmet',
-      },
-      {
-        number: '78454686213',
-        name: 'mehmet',
-      },
-      {
-        number: '123213213213',
-        name: 'mehmet',
-      },
-      {
-        number: '65784123213213',
-        name: 'mehmet',
-      },
-      {
-        number: '78454686213',
-        name: 'mehmet',
-      },
-      {
-        number: '123213213213',
-        name: 'mehmet',
-      },
-      {
-        number: '65784123213213',
-        name: 'mehmet',
-      },
-      {
-        number: '78454686213',
-        name: 'mehmet',
-      },
-    ],
     testData: null,
   };
 
@@ -50,18 +15,24 @@ export default class OpenAccount extends React.Component {
 
   renderItem = ({item}) => (
     <ListItem
-      title={item.name}
-      subtitle={`Hesap no: ${item.number}`}
+      title={
+        'Hesap No: ' +
+        item['Account Number'] +
+        '      Hesap Açılış Tarihi : ' +
+        item['Creation Date']
+      }
+      subtitle={'Bakiye: ' + item.Balance}
       bottomDivider
       chevron
       style={styles.flatListItem}
-      onPress={() => console.warn(item.number)}
+      onPress={() => console.warn(item)}
     />
   );
 
   onPress = () => {
+    const {accounts} = this.props.authStore;
     this.setState({
-      testData: this.state.listData,
+      testData: accounts,
     });
   };
 
@@ -86,6 +57,8 @@ export default class OpenAccount extends React.Component {
     );
   }
 }
+
+export default ListAccount;
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'space-evenly', alignItems: 'center'},

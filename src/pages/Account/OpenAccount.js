@@ -11,12 +11,12 @@ import {Actions} from 'react-native-router-flux';
 @observer
 class OpenAccount extends React.Component {
   onPress = () => {
-    const { user } = this.props.authStore;
+    const {user, setAccountList} = this.props.authStore;
     Api.Auth.newAccount({
       tc: user,
     })
       .then(res => {
-        console.log(res);
+        setAccountList(user);
         Alert.alert(
           'Hesap Oluştuma Başarılı!'
         );

@@ -19,6 +19,7 @@ class Login extends React.Component {
   };
 
   handleSubmit = ({id, password}, {setErrors, setSubmitting}) => {
+    const {setUser, setAccountList} = this.props.authStore;
     // this.props.rootStore.authStore
     //   .login(id, password)
     //   .then(() => {
@@ -29,7 +30,8 @@ class Login extends React.Component {
     //     setSubmitting(false);
     //     setErrors({id: err.message});
     //   });
-    this.props.authStore.setUser(id);
+    setUser(id);
+    setAccountList(id);
     Api.Auth.login({
       tcNumber: id,
       pass: password,
@@ -37,13 +39,13 @@ class Login extends React.Component {
       .then(res => {
         Alert.alert('giriş başarılı.', 'hoşgeldin :)');
         Actions.home({type: 'replace', token: res.token});
+        setSubmitting(false);
       })
       .catch(err => {
-        Alert.alert('giriş başarısız.', 'takrar deneyiniz..');
-        console.log(err);
+        Alert.alert('giriş başarısız.', err);
+        setSubmitting(false);
+        setErrors({id: err.message});
       });
-    //Actions.home({type: 'replace'});
-    setSubmitting(false);
   };
 
   render() {
