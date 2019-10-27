@@ -1,3 +1,4 @@
+/* eslint-disable comma-dangle */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
@@ -17,7 +18,7 @@ export default class SignUp extends React.Component {
 
   handleSubmit = (
     {id, password, phone, email, adress, date, name, surname},
-    {setErrors, setSubmitting}
+    {setErrors, setSubmitting},
   ) => {
     console.warn('onsubmit');
     // this.props.rootStore.authStore

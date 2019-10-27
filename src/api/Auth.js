@@ -23,3 +23,11 @@ export function deleteAccount(data) {
 export function listAccount(data) {
   return request('post', 'account/', data);
 }
+
+export function depositMoney(data) {
+  return request('post', 'account/deposit', data);
+}
+
+export function drawMoney(data) {
+  return request('post', 'account/withdraw', data);
+}

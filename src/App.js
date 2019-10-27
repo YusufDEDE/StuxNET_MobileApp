@@ -16,8 +16,8 @@ import {
   OpenAccount,
   ListAccount,
   CloseAccount,
-  DepositMoney,
-  TakeMoney,
+  Deposit,
+  WithDraw,
   Havale,
   Virman,
 } from '~/pages';
@@ -87,8 +87,8 @@ export default class App extends React.Component {
                 <Scene key={'openAccount'} component={OpenAccount} />
                 <Scene key={'listAccount'} component={ListAccount} />
                 <Scene key={'closeAccount'} component={CloseAccount} />
-                <Scene key={'depositMoney'} component={DepositMoney} />
-                <Scene key={'takeMoney'} component={TakeMoney} />
+                <Scene key={'depositMoney'} component={Deposit} />
+                <Scene key={'takeMoney'} component={WithDraw} />
                 <Scene key={'havale'} component={Havale} />
                 <Scene key={'virman'} component={Virman} />
               </Drawer>

@@ -20,16 +20,6 @@ class Login extends React.Component {
 
   handleSubmit = ({id, password}, {setErrors, setSubmitting}) => {
     const {setUser, setAccountList} = this.props.authStore;
-    // this.props.rootStore.authStore
-    //   .login(id, password)
-    //   .then(() => {
-    //     Actions.mainPage();
-    //     setSubmitting(false);
-    //   })
-    //   .catch(err => {
-    //     setSubmitting(false);
-    //     setErrors({id: err.message});
-    //   });
     setUser(id);
     setAccountList(id);
     Api.Auth.login({

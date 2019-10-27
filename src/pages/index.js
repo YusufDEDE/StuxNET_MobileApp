@@ -5,8 +5,8 @@ import SignUp from './Auth/SignUp';
 import OpenAccount from './Account/OpenAccount';
 import ListAccount from './Account/ListAccount';
 import CloseAccount from './Account/CloseAccount';
-import DepositMoney from './Money/DepositMoney';
-import TakeMoney from './Money/TakeMoney';
+import WithDraw from './Money/WithDraw';
+import Deposit from './Money/Deposit';
 import Havale from './Money/Havale';
 import Virman from './Money/Virman';
 
@@ -18,8 +18,8 @@ export {
   OpenAccount,
   ListAccount,
   CloseAccount,
-  DepositMoney,
-  TakeMoney,
+  WithDraw,
+  Deposit,
   Havale,
   Virman,
 };

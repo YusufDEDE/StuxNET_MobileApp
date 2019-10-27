@@ -30,7 +30,8 @@ class ListAccount extends React.Component {
   );
 
   onPress = () => {
-    const {accounts} = this.props.authStore;
+    const {accounts, user, setAccountList} = this.props.authStore;
+    setAccountList(user);
     this.setState({
       testData: accounts,
     });

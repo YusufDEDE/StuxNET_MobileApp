@@ -16,10 +16,11 @@ class OpenAccount extends React.Component {
       tc: user,
     })
       .then(res => {
-        setAccountList(user);
+        console.log('new acc',res);
         Alert.alert(
           'Hesap Oluştuma Başarılı!'
         );
+        setAccountList(user);
         Actions.pop();
       })
       .catch(err => {

@@ -1,44 +1,50 @@
-/* eslint-disable comma-dangle */
 /* eslint-disable react/no-did-mount-set-state */
+/* eslint-disable comma-dangle */
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react-native/no-color-literals */
 import React from 'react';
 import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
-import {Button} from 'react-native-elements';
-import {fonts, colors} from 'res';
+import {Button, Input} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
-import Api from '~/api';
 import {Actions} from 'react-native-router-flux';
+import Api from '~/api';
+import {fonts, colors} from 'res';
 
 @inject('authStore')
 @observer
-class CloseAccount extends React.Component {
+class WithDraw extends React.Component {
   state = {
+    wantedMoney: null,
     accounts: [],
     account: -1,
   };
+
   componentDidMount() {
     this.setState({
       accounts: this.props.authStore.accounts,
     });
   }
+
   onPress = () => {
-    const {accounts, account} = this.state;
+    const {accounts, account, wantedMoney} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    Api.Auth.deleteAccount({
+
+    Api.Auth.drawMoney({
       tc: user,
       additNo: accounts[account].additionalNo,
+      deposit: wantedMoney,
     })
       .then(res => {
-        console.log('del' + res);
+        console.log(res);
         Alert.alert(
-          'Hesap Kapatıldı.',
-          'Bankamızı kullandığınız için teşekkürler.',
+          'Para Çekme İşlemi Başarılı.',
+          'Bankamızı kullandığınız için teşekkürler :)',
         );
-        Actions.pop();
         setAccountList(user);
+        Actions.pop();
       })
       .catch(err => {
-        Alert.alert('işlem başarısız.', 'takrar deneyiniz..');
-        console.log(err);
+        Alert.alert('Para Çekme İşlemi Başarısız.', err);
       });
   };
 
@@ -58,12 +64,12 @@ class CloseAccount extends React.Component {
   }
 
   render() {
-    const {accounts, account} = this.state;
+    const {accounts, account, wantedMoney} = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
 
-        <Text style={styles.text}>Hesap Kapat</Text>
+        <Text style={styles.text}>Para Çek</Text>
         <View>
           <Text>
             {account > -1
@@ -80,13 +86,23 @@ class CloseAccount extends React.Component {
             </Picker>
           </View>
         </View>
-        <Button title={'Hesabı Kapat'} onPress={this.onPress} />
+        <Input
+          label={'Çekilecek para miktarı (₺)'}
+          labelStyle={{color: 'gray'}}
+          placeholder="300 ₺"
+          leftIconContainerStyle={{left: -13}}
+          containerStyle={{marginTop: 30, width: 350}}
+          keyboardType={'number-pad'}
+          value={wantedMoney}
+          onChangeText={item => this.setState({wantedMoney: item})}
+        />
+        <Button title={'Para Çek'} onPress={this.onPress} />
       </View>
     );
   }
 }
 
-export default CloseAccount;
+export default WithDraw;
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'space-evenly', alignItems: 'center'},
