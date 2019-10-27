@@ -28,24 +28,30 @@ class WithDraw extends React.Component {
   onPress = () => {
     const {accounts, account, wantedMoney} = this.state;
     const {user, setAccountList} = this.props.authStore;
-
-    Api.Auth.drawMoney({
-      tc: user,
-      additNo: accounts[account].additionalNo,
-      deposit: wantedMoney,
-    })
-      .then(res => {
-        console.log(res);
-        Alert.alert(
-          'Para Çekme İşlemi Başarılı.',
-          'Bankamızı kullandığınız için teşekkürler :)',
-        );
-        setAccountList(user);
-        Actions.pop();
-      })
-      .catch(err => {
-        Alert.alert('Para Çekme İşlemi Başarısız.', err);
-      });
+    const value = accounts[account].Balance.split('.');
+    wantedMoney === null
+      ? console.warn('Boş!')
+      : wantedMoney.includes(',')
+      ? Alert.alert('Para Çekme İşlemi Başarısız.', 'virgül kullanmayınız..')
+      : value[0] < wantedMoney
+      ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
+      : Api.Auth.drawMoney({
+          tc: user,
+          additNo: accounts[account].additionalNo,
+          deposit: wantedMoney,
+        })
+          .then(res => {
+            console.log(res);
+            Alert.alert(
+              'Para Çekme İşlemi Başarılı.',
+              'Bankamızı kullandığınız için teşekkürler :)',
+            );
+            setAccountList(user);
+            Actions.pop();
+          })
+          .catch(err => {
+            Alert.alert('Para Çekme İşlemi Başarısız.', err);
+          });
   };
 
   renderPicker() {

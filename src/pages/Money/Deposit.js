@@ -48,7 +48,7 @@ class Deposit extends React.Component {
     } else {
       Alert.alert(
         'Para Yatırma İşlemi Başarısız.',
-        'Lütfen yatırmak istediğiniz tutarı gözden geçirin!',
+        'Lütfen yatırmak istediğiniz tutarı gözden geçirin, Virgül kullanmayın!',
       );
     }
   };

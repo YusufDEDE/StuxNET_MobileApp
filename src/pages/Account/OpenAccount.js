@@ -16,12 +16,10 @@ class OpenAccount extends React.Component {
       tc: user,
     })
       .then(res => {
-        console.log('new acc',res);
-        Alert.alert(
-          'Hesap Oluştuma Başarılı!'
-        );
         setAccountList(user);
-        Actions.pop();
+        Alert.alert(
+          'Hesap Oluştuma Başarılı!', 'Bankamızı kullandığınız için teşekkürler.',  [{text: 'TAMAM', onPress: () => Actions.pop()}]
+        );
       })
       .catch(err => {
         Alert.alert('giriş başarısız.', 'takrar deneyiniz..');

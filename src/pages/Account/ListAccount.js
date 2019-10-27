@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
   },
   flatListContainer: {
-    height: 350,
+    height: 500,
     width: 320,
     borderWidth: 2,
     borderRadius: 30,

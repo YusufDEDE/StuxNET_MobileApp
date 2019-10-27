@@ -31,3 +31,11 @@ export function depositMoney(data) {
 export function drawMoney(data) {
   return request('post', 'account/withdraw', data);
 }
+
+export function virman(data) {
+  return request('post', 'account/virman', data);
+}
+
+export function havale(data) {
+  return request('post', 'account/eft', data);
+}
