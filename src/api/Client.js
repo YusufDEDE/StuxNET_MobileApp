@@ -3,7 +3,7 @@ import {create} from 'apisauce';
 //import authStore from '~/store/authStore';
 
 const client = create({
-  baseURL: 'http://192.168.137.1:3000',
+  baseURL: 'https://stuxnetapi.herokuapp.com/',
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
