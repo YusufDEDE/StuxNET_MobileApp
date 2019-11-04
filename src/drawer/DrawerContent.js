@@ -62,6 +62,23 @@ class DrawerContent extends React.Component {
               <MenuItem text="Para Çek" scene="takeMoney" />
               <MenuItem text="Havale" scene="havale" />
               <MenuItem text="Virman" scene="virman" />
+              <MenuItem text="Para Transferleri" scene="moneyTransfer" />
+            </CollapseBody>
+          </Collapse>
+          <Collapse>
+            <CollapseHeader>
+              <View style={styles.listItem}>
+                <Icon
+                  name="dollar-sign"
+                  size={16}
+                  color={this.state.pressed ? 'white' : 'black'}
+                />
+                <Text style={[styles.drawerText]}>Ödemeler</Text>
+              </View>
+            </CollapseHeader>
+            <CollapseBody>
+              <MenuItem text="Fatura Öde" scene="payment" />
+              <MenuItem text="Ödeme Geçmişim" scene="pastPayments" />
             </CollapseBody>
           </Collapse>
         </View>

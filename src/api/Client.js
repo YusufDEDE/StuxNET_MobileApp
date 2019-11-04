@@ -1,6 +1,6 @@
 //import {API_URL} from 'react-native-dotenv';
 import {create} from 'apisauce';
-//import authStore from '~/store/authStore';
+import authStore from '~/store/authStore';
 
 const client = create({
   baseURL: 'https://stuxnetapi.herokuapp.com/',
@@ -13,16 +13,21 @@ const client = create({
 /**
  * Sends HTTP request
  */
-export function request(method, path, params = {}, headers = {}) {
+export function request(method, path, params = {}, subdomain) {
+  subdomain === true
+    ? client.setBaseURL('https://stuxnet-payment.herokuapp.com/')
+    : client.setBaseURL('https://stuxnetapi.herokuapp.com/');
+
   return client[method](path, params, {
-    headers,
+    headers: {
+      token: authStore.authToken,
+    },
   }).then(response => {
-    if (response.ok) {
-      console.log(response);
-      return Promise.resolve(response.data);
+    if (response.data.status === 500) {
+      return Promise.reject('Yanlış tc veya şifre!!!!');
     } else {
-      console.log(response);
-      return Promise.reject(response);
+      console.log('aaa', response);
+      return Promise.resolve(response.data);
     }
   });
 }

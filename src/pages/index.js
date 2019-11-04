@@ -9,6 +9,10 @@ import WithDraw from './Money/WithDraw';
 import Deposit from './Money/Deposit';
 import Havale from './Money/Havale';
 import Virman from './Money/Virman';
+import Profile from './Profile';
+import MoneyTransfer from './Money/MoneyTransfer';
+import Payment from './Payment/Payment';
+import PastPayments from './Payment/PastPayment';
 
 export {
   HomeScreen,
@@ -22,4 +26,8 @@ export {
   Deposit,
   Havale,
   Virman,
+  Profile,
+  MoneyTransfer,
+  Payment,
+  PastPayments,
 };

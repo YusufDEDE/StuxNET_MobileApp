@@ -38,7 +38,6 @@ class OpenAccount extends React.Component {
           <View style={styles.pickerStyle}>
             <Picker>
               <Picker.Item label="Bireysel" value="bireysel" />
-              <Picker.Item label="Kurumsal" value="kurumsal" />
             </Picker>
           </View>
         </View>

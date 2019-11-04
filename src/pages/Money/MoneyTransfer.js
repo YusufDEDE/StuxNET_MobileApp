@@ -1,12 +1,14 @@
+/* eslint-disable react-native/no-color-literals */
 import React from 'react';
 import {View, StyleSheet, StatusBar, FlatList, Text} from 'react-native';
 import {Button, ListItem} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {fonts, colors} from 'res';
+import {Actions} from 'react-native-router-flux';
 
 @inject('authStore')
 @observer
-class ListAccount extends React.Component {
+class MoneyTransfer extends React.Component {
   state = {
     testData: null,
   };
@@ -16,51 +18,54 @@ class ListAccount extends React.Component {
   renderItem = ({item}) => (
     <ListItem
       title={
-        'Hesap No: ' +
-        item['Account Number'] +
-        '      Hesap Açılış Tarihi : ' +
-        item['Creation Date']
+        'İşlem Türü: ' +
+        item.ACTIVITY +
+        '                      İşlem Tutarı : ' +
+        item.PAY
       }
-      subtitle={'Bakiye: ' + item.Balance}
+      subtitle={
+        'Gönderen: ' + item.SENDER + '             Alıcı: ' + item.RECIPIENT
+      }
       bottomDivider
       chevron
       style={styles.flatListItem}
-      onPress={() => console.warn(item)}
+      onPress={() => this.handlePress(item)}
     />
   );
 
+  handlePress = item => {
+    Actions.jump('moneyTransferPopup', {item});
+  };
+
   onPress = () => {
-    const {accounts, user, setAccountList} = this.props.authStore;
-    setAccountList(user);
-    console.log(accounts);
-    this.setState({
-      testData: accounts,
-    });
+    const {user, setMoneyTransferList} = this.props.authStore;
+    setMoneyTransferList(user);
   };
 
   render() {
+    const {moneyTransferList} = this.props.authStore;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
 
-        <Text style={styles.text}>Hesaplarım</Text>
+        <Text style={styles.text}>İşlemlerim</Text>
         <View style={styles.accountsContainer}>
           <View style={styles.flatListContainer}>
             <FlatList
               keyExtractor={this.keyExtractor}
-              data={this.state.testData}
+              data={moneyTransferList}
               renderItem={this.renderItem}
               nullable
             />
           </View>
         </View>
-        <Button title={'Hesap Listele'} onPress={this.onPress} />
+        <Button title={'İşlemleri Listele'} onPress={this.onPress} />
       </View>
     );
   }
 }
 
-export default ListAccount;
+export default MoneyTransfer;
 
 const styles = StyleSheet.create({
   container: {
@@ -80,12 +85,22 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
   },
   flatListContainer: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.53,
+    shadowRadius: 13.97,
+
+    elevation: 21,
     height: '100%',
     marginHorizontal: 50,
     borderWidth: 2,
     borderRadius: 30,
     borderColor: colors.lightGray,
     overflow: 'hidden',
+    backgroundColor: 'white',
   },
   accountsContainer: {
     width: '100%',

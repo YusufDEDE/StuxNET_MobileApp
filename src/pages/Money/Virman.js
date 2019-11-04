@@ -14,7 +14,7 @@ import {fonts, colors} from 'res';
 class Virman extends React.Component {
   state = {
     accounts: [],
-    wantedMoney: null,
+    wantedMoney: '',
     acc: -1,
     targetAcc: -1,
   };
@@ -29,13 +29,26 @@ class Virman extends React.Component {
   onPress = () => {
     const {accounts, wantedMoney, acc, targetAcc} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    const value = accounts[acc].Balance.split('.');
+    const value = accounts[acc].Balance;
 
-    wantedMoney === null
+    wantedMoney.indexOf('.') !== -1 &&
+    wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
+      ? Alert.alert(
+          'Hoaydaa',
+          'Miraderim alt tarafı para gönderecen fantazi yapma!',
+        )
+      : wantedMoney.includes(' ') || wantedMoney.includes('-')
+      ? Alert.alert(
+          'Oooooooopsss',
+          'Elf gözlerim tanımsız simgeler görüyor :) ',
+        )
+      : wantedMoney <= 0
+      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+      : wantedMoney === ''
       ? Alert.alert('Para miktarı boş geçilemez!')
       : wantedMoney.includes(',')
       ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'virgül kullanmayınız..')
-      : value[0] - wantedMoney < 0
+      : value - wantedMoney < 0
       ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
       : acc === targetAcc
       ? Alert.alert('İşlem Başarısız', 'Hedef hesap alıcı hesapla aynı olamaz!')
@@ -59,6 +72,7 @@ class Virman extends React.Component {
   };
 
   renderSenderPicker() {
+    console.log(this.state.accounts);
     if (this.state.accounts === undefined) {
       return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
     }
@@ -98,7 +112,7 @@ class Virman extends React.Component {
         <View>
           <Text>
             {acc > -1
-              ? 'Gönderen Hesap: ' + accounts[acc].Balance
+              ? 'Gönderen Hesap: ' + accounts[acc].Balance + ' TRY'
               : 'Hesap Seçiniz'}
           </Text>
           <View style={styles.pickerStyle}>
@@ -114,7 +128,7 @@ class Virman extends React.Component {
         <View>
           <Text>
             {targetAcc > -1
-              ? 'Alıcı Hesap: ' + accounts[targetAcc].Balance
+              ? 'Alıcı Hesap: ' + accounts[targetAcc].Balance + ' TRY'
               : 'Hesap Seçiniz'}
           </Text>
           <View style={styles.pickerStyle}>

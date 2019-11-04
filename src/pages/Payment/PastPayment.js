@@ -1,41 +1,72 @@
+/* eslint-disable react-native/no-color-literals */
 import React from 'react';
 import {View, StyleSheet, StatusBar, FlatList, Text} from 'react-native';
 import {Button, ListItem} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {fonts, colors} from 'res';
+import {Actions} from 'react-native-router-flux';
+import Api from '~/api';
 
 @inject('authStore')
 @observer
-class ListAccount extends React.Component {
+class PastPayments extends React.Component {
   state = {
     testData: null,
   };
 
   keyExtractor = (item, index) => index.toString();
 
+  componentDidMount() {
+    const {user} = this.props.authStore;
+    Api.Auth.paymentTransactions({
+      tc: user,
+    })
+      .then(res => {
+        this.setState({
+          testData: res,
+        });
+      })
+      .catch(err => console.warn(err));
+  }
+
   renderItem = ({item}) => (
     <ListItem
       title={
-        'Hesap No: ' +
-        item['Account Number'] +
-        '      Hesap Açılış Tarihi : ' +
-        item['Creation Date']
+        'Fatura Türü: ' +
+        item.BillType +
+        '                    Fatura Numarası: ' +
+        item.BillNumber +
+        '                      İşlem Tutarı : ' +
+        item.Payment
       }
-      subtitle={'Bakiye: ' + item.Balance}
+      subtitle={
+        'Ödeyen Hesap No: ' +
+        item.additionalNo +
+        '                          Ek No: ' +
+        item.additionalNo
+      }
       bottomDivider
       chevron
       style={styles.flatListItem}
-      onPress={() => console.warn(item)}
+      onPress={() => this.handlePress(item)}
     />
   );
 
+  handlePress = item => {
+    Actions.jump('pastPaymentPopup', {item});
+  };
+
   onPress = () => {
-    const {accounts, user, setAccountList} = this.props.authStore;
-    setAccountList(user);
-    console.log(accounts);
-    this.setState({
-      testData: accounts,
-    });
+    const {user} = this.props.authStore;
+    Api.Auth.paymentTransactions({
+      tc: user,
+    })
+      .then(res => {
+        this.setState({
+          testData: res,
+        });
+      })
+      .catch(err => console.warn(err));
   };
 
   render() {
@@ -43,7 +74,7 @@ class ListAccount extends React.Component {
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
 
-        <Text style={styles.text}>Hesaplarım</Text>
+        <Text style={styles.text}>İşlemlerim</Text>
         <View style={styles.accountsContainer}>
           <View style={styles.flatListContainer}>
             <FlatList
@@ -54,13 +85,13 @@ class ListAccount extends React.Component {
             />
           </View>
         </View>
-        <Button title={'Hesap Listele'} onPress={this.onPress} />
+        <Button title={'İşlemleri Listele'} onPress={this.onPress} />
       </View>
     );
   }
 }
 
-export default ListAccount;
+export default PastPayments;
 
 const styles = StyleSheet.create({
   container: {
@@ -80,12 +111,22 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
   },
   flatListContainer: {
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 10,
+    },
+    shadowOpacity: 0.53,
+    shadowRadius: 13.97,
+
+    elevation: 21,
     height: '100%',
     marginHorizontal: 50,
     borderWidth: 2,
     borderRadius: 30,
     borderColor: colors.lightGray,
     overflow: 'hidden',
+    backgroundColor: 'white',
   },
   accountsContainer: {
     width: '100%',

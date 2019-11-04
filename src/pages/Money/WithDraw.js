@@ -14,7 +14,7 @@ import {fonts, colors} from 'res';
 @observer
 class WithDraw extends React.Component {
   state = {
-    wantedMoney: null,
+    wantedMoney: '',
     accounts: [],
     account: -1,
   };
@@ -28,20 +28,33 @@ class WithDraw extends React.Component {
   onPress = () => {
     const {accounts, account, wantedMoney} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    const value = accounts[account].Balance.split('.');
-    wantedMoney === null
-      ? console.warn('Boş!')
+    const value = accounts[account].Balance;
+
+    wantedMoney.indexOf('.') !== -1 &&
+    wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
+      ? Alert.alert(
+          'Hoaydaa',
+          'Biladerim alt tarafı para gönderecen fantazi yapma!',
+        )
+      : wantedMoney.includes(' ') || wantedMoney.includes('-')
+      ? Alert.alert(
+          'Oooooooopsss',
+          'Elf gözlerim tanımsız simgeler görüyor :) ',
+        )
+      : wantedMoney <= 0
+      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+      : wantedMoney === ''
+      ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Değer girmediniz :)')
       : wantedMoney.includes(',')
       ? Alert.alert('Para Çekme İşlemi Başarısız.', 'virgül kullanmayınız..')
-      : value[0] < wantedMoney
+      : value < wantedMoney
       ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
       : Api.Auth.drawMoney({
           tc: user,
           additNo: accounts[account].additionalNo,
-          deposit: wantedMoney,
+          withdrawal: wantedMoney,
         })
           .then(res => {
-            console.log(res);
             Alert.alert(
               'Para Çekme İşlemi Başarılı.',
               'Bankamızı kullandığınız için teşekkürler :)',
@@ -55,6 +68,7 @@ class WithDraw extends React.Component {
   };
 
   renderPicker() {
+    console.log(this.state.accounts);
     if (this.state.accounts === undefined) {
       return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
     }
@@ -79,7 +93,7 @@ class WithDraw extends React.Component {
         <View>
           <Text>
             {account > -1
-              ? 'Bakiye: ' + accounts[account].Balance
+              ? 'Bakiye: ' + accounts[account].Balance + ' TRY'
               : 'Hesap Seçiniz'}
           </Text>
           <View style={styles.pickerStyle}>

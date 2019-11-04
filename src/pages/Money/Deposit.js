@@ -14,7 +14,7 @@ import {fonts, colors} from 'res';
 @observer
 class Deposit extends React.Component {
   state = {
-    money: null,
+    money: '',
     accounts: [],
     account: -1,
   };
@@ -28,29 +28,40 @@ class Deposit extends React.Component {
   onPress = () => {
     const {accounts, account, money} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    if (money > 0) {
-      Api.Auth.depositMoney({
-        tc: user,
-        additNo: accounts[account].additionalNo,
-        deposit: money,
-      })
-        .then(res => {
-          Alert.alert(
-            'Para Yatırma İşlemi Başarılı.',
-            'Bankamızı kullandığınız için teşekkürler :)',
-          );
-          setAccountList(user);
-          Actions.pop();
+
+    money.indexOf('.') !== -1 && money.includes('.', money.indexOf('.') + 1)
+      ? Alert.alert(
+          'Hoaydaa',
+          'Biladerim alt tarafı para gönderecen fantazi yapma!',
+        )
+      : money.includes(' ') || money.includes('-')
+      ? Alert.alert(
+          'Oooooooopsss',
+          'Elf gözlerim tanımsız simgeler görüyor :) ',
+        )
+      : money <= 0
+      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+      : money > 0 && !money.includes(',')
+      ? Api.Auth.depositMoney({
+          tc: user,
+          additNo: accounts[account].additionalNo,
+          deposit: money,
         })
-        .catch(err => {
-          Alert.alert('Para Yatırma İşlemi Başarısız.', err);
-        });
-    } else {
-      Alert.alert(
-        'Para Yatırma İşlemi Başarısız.',
-        'Lütfen yatırmak istediğiniz tutarı gözden geçirin, Virgül kullanmayın!',
-      );
-    }
+          .then(res => {
+            Alert.alert(
+              'Para Yatırma İşlemi Başarılı.',
+              'Bankamızı kullandığınız için teşekkürler :)',
+            );
+            setAccountList(user);
+            Actions.pop();
+          })
+          .catch(err => {
+            Alert.alert('Para Yatırma İşlemi Başarısız.', err);
+          })
+      : Alert.alert(
+          'Para Yatırma İşlemi Başarısız.',
+          'Lütfen yatırmak istediğiniz tutarı gözden geçirin ve virgül kullanmayın!',
+        );
   };
 
   renderPicker() {
@@ -78,7 +89,7 @@ class Deposit extends React.Component {
         <View>
           <Text>
             {account > -1
-              ? 'Bakiye: ' + accounts[account].Balance
+              ? 'Bakiye: ' + accounts[account].Balance + ' TRY'
               : 'Hesap Seçiniz'}
           </Text>
           <View style={styles.pickerStyle}>

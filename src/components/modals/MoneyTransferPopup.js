@@ -1,11 +1,16 @@
 import React, {Component} from 'react';
 import {BaseModal, ScaleAnimation} from 'react-native-modals';
 import {colors} from 'res';
-import {Image, Text, View, Button} from 'react-native';
+import {Text, View} from 'react-native';
+import {Button} from 'react-native-elements';
+import Api from '~/api';
 import {Actions} from 'react-native-router-flux';
 import {ScaledSheet} from 'react-native-size-matters/extend';
 
-export default class CustomAlert extends Component {
+export default class MoneyTransferPopup extends Component {
+  state = {
+    data: null,
+  };
   dismiss = () => this.ref.dismiss();
 
   onPress = () => {
@@ -13,10 +18,23 @@ export default class CustomAlert extends Component {
     this.props.onPress();
   };
 
+  componentDidMount() {
+    Api.Auth.moneyTransferPopup({actID: this.props.item.activityID})
+      .then(res => {
+        this.setState({
+          data: res[0],
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
   onRef = ref => (this.ref = ref);
 
   render() {
-    const {text, title, image, buttonTitle, animation} = this.props;
+    const {animation} = this.props;
+    const {data} = this.state;
+    console.log('asaaad', data);
 
     return (
       <BaseModal
@@ -25,28 +43,41 @@ export default class CustomAlert extends Component {
         modalAnimation={animation}
         onTouchOutside={this.dismiss}
         width={0.9}
+        overlayPointerEvents="auto"
         onDismiss={Actions.pop}>
         <View style={styles.topContainer}>
-          {image && (
-            <Image resizeMode="contain" source={image} style={styles.image} />
+          {data ? (
+            <>
+              <Text style={styles.title}>İşlem Türü: {data.ACTIVITY}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.title}>Tarih: {data.DATE}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.title}>İşlem Zamanı: {data.TIME}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.title}>Tutar: {data.PAY}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.title}>Gönderici: {data.SENDER}</Text>
+              <View style={styles.divider} />
+              <Text style={styles.title}>Alıcı: {data.RECIPIENT}</Text>
+            </>
+          ) : (
+            <Text>Bekleniyor..</Text>
           )}
-          {title && <Text style={styles.title}>{title}</Text>}
-          {text && <Text style={styles.text}>{text}</Text>}
         </View>
         <View style={styles.bottomContainer}>
-          <Button title={buttonTitle} onPress={this.onPress} />
+          <Button title={'TAMAM'} onPressIn={Actions.pop} />
         </View>
       </BaseModal>
     );
   }
 }
 
-CustomAlert.defaultProps = {
+MoneyTransferPopup.defaultProps = {
   animation: new ScaleAnimation({
     initialValue: 0,
     useNativeDriver: true,
   }),
-  buttonTitle: 'OK',
+  buttonTitle: 'Tamam',
   onPress: () => null,
 };
 
@@ -56,6 +87,12 @@ const styles = ScaledSheet.create({
     marginBottom: '10@s',
     width: '40@s',
     height: '40@s',
+  },
+  divider: {
+    borderBottomColor: 'gray',
+    borderWidth: 0.3,
+    marginVertical: 10,
+    marginHorizontal: 50,
   },
   text: {
     marginTop: '3@s',
@@ -86,9 +123,9 @@ const styles = ScaledSheet.create({
   bottomContainer: {
     backgroundColor: '#F5FAFF',
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
-    height: '60@s',
+    height: '80@s',
     paddingHorizontal: '20@s',
   },
 });

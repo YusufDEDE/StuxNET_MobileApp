@@ -2,7 +2,15 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Picker,
+  Text,
+  Alert,
+  ScrollView,
+} from 'react-native';
 import {Button, Input} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import Api from '~/api';
@@ -15,7 +23,7 @@ class Havale extends React.Component {
   state = {
     accounts: [],
     acc: -1,
-    wantedMoney: null,
+    wantedMoney: '',
     targetAcc: null,
     targetAddit: null,
   };
@@ -30,9 +38,22 @@ class Havale extends React.Component {
   onPress = () => {
     const {wantedMoney, targetAcc, targetAddit, accounts, acc} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    const value = accounts[acc].Balance.split('.');
+    const value = accounts[acc].Balance;
 
-    wantedMoney === null
+    wantedMoney.indexOf('.') !== -1 &&
+    wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
+      ? Alert.alert(
+          'Hoaydaa',
+          'Biladerim alt tarafı para gönderecen fantazi yapma!',
+        )
+      : wantedMoney.includes(' ') || wantedMoney.includes('-')
+      ? Alert.alert(
+          'Oooooooopsss',
+          'Elf gözlerim tanımsız simgeler görüyor :) ',
+        )
+      : wantedMoney <= 0
+      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+      : wantedMoney === ''
       ? Alert.alert('Para miktarı boş geçilemez!')
       : wantedMoney.includes(',')
       ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'virgül kullanmayınız..')
@@ -55,10 +76,12 @@ class Havale extends React.Component {
           })
           .catch(err => {
             console.log(err);
+            Alert.alert('Hata!', 'Kod: 500 , Hedef Hesap Tanımsız!!');
           });
   };
 
   renderPicker() {
+    console.log(this.state.accounts);
     if (this.state.accounts === undefined) {
       return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
     }
@@ -66,7 +89,14 @@ class Havale extends React.Component {
       return (
         <Picker.Item
           key={index.toString()}
-          label={item.accNo + ' - ' + item.additionalNo + ' / ' + item.Balance}
+          label={
+            item.accNo +
+            ' - ' +
+            item.additionalNo +
+            ' / ' +
+            item.Balance +
+            ' TRY'
+          }
           value={index}
         />
       );
@@ -76,65 +106,70 @@ class Havale extends React.Component {
   render() {
     const {accounts, acc, targetAcc} = this.state;
     return (
-      <View style={styles.container}>
-        <StatusBar barStyle="dark-content" />
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <View style={styles.container}>
+          <StatusBar barStyle="dark-content" />
+          <View style={styles.headerBox}>
+            <Text style={styles.text}>Havale İşlemleri</Text>
+            <View>
+              <Text>
+                {acc > -1
+                  ? 'Gönderen Hesap: ' + accounts[acc].Balance + ' TRY'
+                  : 'Hesap Seçiniz'}
+              </Text>
+              <View style={styles.pickerStyle}>
+                <Picker
+                  selectedValue={this.state.acc}
+                  onValueChange={(itemValue, itemIndex) =>
+                    this.setState({acc: itemValue})
+                  }>
+                  {this.renderPicker()}
+                </Picker>
+              </View>
+            </View>
+          </View>
+          <View style={styles.inputBox}>
+            <Input
+              label={'Gönderilecek hesap no'}
+              labelStyle={{color: 'gray'}}
+              placeholder="123456789"
+              leftIconContainerStyle={{left: -13}}
+              containerStyle={{marginTop: 30, width: 350}}
+              keyboardType={'number-pad'}
+              value={targetAcc}
+              onChangeText={item => {
+                this.setState({targetAcc: item});
+              }}
+            />
+            <Input
+              label={'Gönderilecek Ek no'}
+              labelStyle={{color: 'gray'}}
+              placeholder="54001"
+              leftIconContainerStyle={{left: -13}}
+              containerStyle={{marginTop: 30, width: 350}}
+              keyboardType={'number-pad'}
+              value={this.state.targetAddit}
+              onChangeText={item => {
+                this.setState({targetAddit: item});
+              }}
+            />
 
-        <Text style={styles.text}>Havale İşlemleri</Text>
-        <View>
-          <Text>
-            {acc > -1
-              ? 'Gönderen Hesap: ' + accounts[acc].Balance
-              : 'Hesap Seçiniz'}
-          </Text>
-          <View style={styles.pickerStyle}>
-            <Picker
-              selectedValue={this.state.acc}
-              onValueChange={(itemValue, itemIndex) =>
-                this.setState({acc: itemValue})
-              }>
-              {this.renderPicker()}
-            </Picker>
+            <Input
+              label={'Gönderilecek para miktarı (₺)'}
+              labelStyle={{color: 'gray'}}
+              placeholder="300 ₺"
+              leftIconContainerStyle={{left: -13}}
+              containerStyle={{marginTop: 30, width: 350}}
+              keyboardType={'number-pad'}
+              value={this.state.wantedMoney}
+              onChangeText={item => {
+                this.setState({wantedMoney: item});
+              }}
+            />
+            <Button title={'Gönder'} onPress={this.onPress} />
           </View>
         </View>
-        <Input
-          label={'Gönderilecek hesap no'}
-          labelStyle={{color: 'gray'}}
-          placeholder="123456789"
-          leftIconContainerStyle={{left: -13}}
-          containerStyle={{marginTop: 30, width: 350}}
-          keyboardType={'number-pad'}
-          value={targetAcc}
-          onChangeText={item => {
-            this.setState({targetAcc: item});
-          }}
-        />
-        <Input
-          label={'Gönderilecek Ek no'}
-          labelStyle={{color: 'gray'}}
-          placeholder="54001"
-          leftIconContainerStyle={{left: -13}}
-          containerStyle={{marginTop: 30, width: 350}}
-          keyboardType={'number-pad'}
-          value={this.state.targetAddit}
-          onChangeText={item => {
-            this.setState({targetAddit: item});
-          }}
-        />
-
-        <Input
-          label={'Gönderilecek para miktarı (₺)'}
-          labelStyle={{color: 'gray'}}
-          placeholder="300 ₺"
-          leftIconContainerStyle={{left: -13}}
-          containerStyle={{marginTop: 30, width: 350}}
-          keyboardType={'number-pad'}
-          value={this.state.wantedMoney}
-          onChangeText={item => {
-            this.setState({wantedMoney: item});
-          }}
-        />
-        <Button title={'Gönder'} onPress={this.onPress} />
-      </View>
+      </ScrollView>
     );
   }
 }
@@ -142,7 +177,7 @@ class Havale extends React.Component {
 export default Havale;
 
 const styles = StyleSheet.create({
-  container: {flex: 1, justifyContent: 'space-evenly', alignItems: 'center'},
+  container: {flex: 1, justifyContent: 'space-between', alignItems: 'center'},
   text: {
     fontFamily: fonts.avenirMedium,
     fontSize: 28,
@@ -154,5 +189,14 @@ const styles = StyleSheet.create({
     width: 300,
     borderColor: colors.cyprus,
     borderWidth: 1,
+  },
+  inputBox: {
+    justifyContent: 'space-between',
+    height: 420,
+    marginBottom: 15,
+  },
+  headerBox: {
+    height: 150,
+    justifyContent: 'space-between',
   },
 });

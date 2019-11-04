@@ -1,111 +1,89 @@
-/* eslint-disable eqeqeq */
 /* eslint-disable comma-dangle */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
 import {ScrollView, View, StyleSheet, Alert} from 'react-native';
-import {Input, Button} from 'react-native-elements';
+import {Input, Button, Text} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import * as yup from 'yup';
+import {inject, observer} from 'mobx-react';
 import Api from '~/api';
 import {Formik} from 'formik';
 import {colors} from 'res';
 
-const dateRegExp = /^\d+$/; //sadece sayılar
-
-export default class SignUp extends React.Component {
+@inject('authStore')
+@observer
+class Profile extends React.Component {
   state = {
     isVisible: true,
-    isDate: false,
-    date: '',
+    password: '',
+  };
+
+  handleChange = text => {
+    this.setState({password: text});
   };
 
   handleSubmit = (
-    {id, password, phone, email, adress, date, name, surname},
+    {password, phone, email, adress, date, name, surname},
     {setErrors, setSubmitting},
   ) => {
-    Api.Auth.register({
-      tc: id,
-      pw: password,
-      firstName: name,
-      lastName: surname,
-      birthDate: date,
-      address: adress,
-      phone: phone,
-      mail: email,
-    })
-      .then(() => {
-        Actions.login();
-        Alert.alert('Kayıt olma başarılı.', 'giriş yapabilirsiniz..');
-        setSubmitting(false);
+    const {userInfo, setAccountList} = this.props.authStore;
+    setSubmitting(true);
+    if (this.state.password === userInfo.password) {
+      Api.Auth.updateUser({
+        tc: 77777777777,
+        pw: password,
+        firstName: name,
+        lastName: surname,
+        birthDate: date,
+        address: adress,
+        phone: phone,
+        mail: email,
       })
-      .catch(() => {
-        Alert.alert('Kayıt olma başarısız!.', 'lütfen tekrar deneyiniz..');
-        setSubmitting(false);
-      });
-
-    setSubmitting(false);
+        .then(res => {
+          console.log(res);
+          setSubmitting(false);
+          setAccountList(userInfo.tcNumber);
+          Actions.home();
+        })
+        .catch(err => {
+          setSubmitting(false);
+          setErrors({id: err.message});
+        });
+    } else {
+      setSubmitting(false);
+      Alert.alert(
+        'You shall not pass!!',
+        'Eski şifrenle girdiğin şifre uyumsuz bro :)',
+      );
+    }
   };
-
-  onChangeDate = text => {
-    const str = this.state.date;
-    if (
-      !str.endsWith('-') &&
-      (text.length === 7 || text.length === 4) &&
-      dateRegExp.test(text.slice(-1)) // '-' atmak için
-    ) {
-      text += '-';
-    }
-    this.setState(state => ({
-      date:
-        (state.date.length === 7 || state.date.length === 4) &&
-        (text.lastIndexOf('-') !== 4 && text.lastIndexOf('-') !== 7)
-          ? (state.date += '-')
-          : text,
-    }));
-    console.log('11111', this.state.isDate);
-  };
-
-  isValidDate = dateString => {
-    // First check for the pattern
-    if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
-      return false;
-    }
-
-    // Parse the date parts to integers
-    var parts = dateString.split('-');
-    var day = parseInt(parts[1], 10);
-    var month = parseInt(parts[0], 10);
-    var year = parseInt(parts[2], 10);
-
-    // Check the ranges of month and year
-    if (year < 1000 || year > 3000 || month == 0 || month > 12) {
-      return false;
-    }
-
-    var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-    // Adjust for leap years
-    if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
-      monthLength[1] = 29;
-    }
-
-    // Check the range of the day
-    return day > 0 && day <= monthLength[month - 1];
-  };
-
   render() {
+    const {
+      firstName,
+      lastName,
+      mail,
+      phoneNumber,
+      tcNumber,
+      address,
+      birthDate,
+    } = this.props.authStore.userInfo;
     return (
       <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
         <Formik
           onSubmit={this.handleSubmit}
+          initialValues={{
+            name: firstName,
+            surname: lastName,
+            email: mail,
+            phone: phoneNumber,
+            address: address,
+            date: birthDate,
+            password: '',
+            confirmPassword: '',
+          }}
           validationSchema={yup.object().shape({
-            id: yup
-              .number('Bu alana sayı girilmelidir.')
-              .required('Bu alan boş geçilemez')
-              .moreThan(9999999999, 'Kimlik Numarası uygun değil!')
-              .lessThan(100000000000, 'Kimlik Numarası uygun değil!'),
             password: yup
               .string('Bu alan boş geçilemez')
               .min(6, 'Şifre minimum 6 karakter içermelidir')
@@ -130,19 +108,44 @@ export default class SignUp extends React.Component {
                 <Input
                   label={'Kimlik No'}
                   labelStyle={{color: 'red'}}
-                  placeholder="11122233344"
+                  placeholder="*********"
                   keyboardType={'numeric'}
+                  disabled={true}
                   leftIcon={<Icon name="id-card" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
-                  onChangeText={props.handleChange('id')}
-                  onBlur={props.handleBlur('id')}
-                  value={props.values.id}
+                  value={tcNumber}
                   errorMessage={
                     props.touched.id && props.errors.id ? props.errors.id : null
                   }
                 />
                 <Input
-                  label={'Şifre'}
+                  label={'Eski Şifre'}
+                  labelStyle={{color: 'red'}}
+                  placeholder="******"
+                  leftIcon={<Icon name="key" size={24} color="black" />}
+                  leftIconContainerStyle={{left: -13}}
+                  containerStyle={{marginTop: 30}}
+                  rightIcon={
+                    <Icon
+                      name={this.state.isVisible ? 'eye-slash' : 'eye'}
+                      size={24}
+                      color="black"
+                      onPress={() =>
+                        this.setState({isVisible: !this.state.isVisible})
+                      }
+                    />
+                  }
+                  secureTextEntry={this.state.isVisible}
+                  onChangeText={this.handleChange}
+                  value={this.state.password}
+                  errorMessage={
+                    props.touched.password && props.errors.password
+                      ? props.errors.password
+                      : null
+                  }
+                />
+                <Input
+                  label={'Yeni Şifre'}
                   labelStyle={{color: 'red'}}
                   placeholder="******"
                   leftIcon={<Icon name="key" size={24} color="black" />}
@@ -169,7 +172,7 @@ export default class SignUp extends React.Component {
                   }
                 />
                 <Input
-                  label={'Şifre Tekrar'}
+                  label={'Yeni Şifre Tekrar'}
                   labelStyle={{color: 'red'}}
                   placeholder="******"
                   leftIcon={<Icon name="key" size={24} color="black" />}
@@ -224,9 +227,9 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="map" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
-                  onChangeText={props.handleChange('adress')}
-                  onBlur={props.handleBlur('adress')}
-                  value={props.values.adress}
+                  onChangeText={props.handleChange('address')}
+                  onBlur={props.handleBlur('address')}
+                  value={props.values.address}
                 />
                 <Input
                   label={'Mail'}
@@ -251,9 +254,9 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
-                  onChangeText={this.onChangeDate}
-                  value={this.state.date}
-                  errorMessage={this.state.isDate}
+                  onChangeText={props.handleChange('date')}
+                  onBlur={props.handleBlur('date')}
+                  value={props.values.date}
                 />
                 <Input
                   label={'Telefon'}
@@ -274,7 +277,7 @@ export default class SignUp extends React.Component {
                 />
                 <View style={styles.buttonBox}>
                   <Button
-                    title="Kayıt Ol"
+                    title="Bilgileri Güncelle"
                     type="outline"
                     containerStyle={{
                       width: 200,
@@ -295,6 +298,8 @@ export default class SignUp extends React.Component {
     );
   }
 }
+
+export default Profile;
 
 const styles = StyleSheet.create({
   inputBox: {
