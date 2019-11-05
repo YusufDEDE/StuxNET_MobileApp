@@ -1,3 +1,4 @@
+/* eslint-disable react/no-did-mount-set-state */
 /* eslint-disable comma-dangle */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
@@ -21,6 +22,11 @@ class Profile extends React.Component {
     date: '',
   };
 
+  componentDidMount() {
+    this.setState({
+      date: this.props.authStore.userInfo.birthDate,
+    });
+  }
   onChangeDate = text => {
     const str = this.state.date;
     if (!str.endsWith('.') && (text.length === 2 || text.length === 5)) {
@@ -47,28 +53,32 @@ class Profile extends React.Component {
   };
 
   handleSubmit = (
-    {password, phone, email, adress, date, name, surname},
+    {password, phone, email, adress, name, surname},
     {setErrors, setSubmitting},
   ) => {
-    const {userInfo, setAccountList} = this.props.authStore;
+    const {userInfo, setAccountList, user} = this.props.authStore;
     if (this.state.password === userInfo.password) {
       Api.Auth.updateUser({
-        tc: 77777777777,
+        tc: user,
         pw: password,
         firstName: name,
         lastName: surname,
-        birthDate: date,
+        birthDate: this.state.date,
         address: adress,
         phone: phone,
         mail: email,
       })
         .then(res => {
+          Alert.alert(
+            'İşlem başarılı!!',
+            'Bankamızı keyifle kullanmaya devam edebilirsiniz :)',
+          );
           setSubmitting(false);
           setAccountList(userInfo.tcNumber);
           Actions.home();
         })
         .catch(err => {
-          console.log(err);
+          Alert.alert('İşlem başarısız!!', 'Bilgilerin değişmedi');
           setSubmitting(false);
           setErrors({id: err.message});
         });

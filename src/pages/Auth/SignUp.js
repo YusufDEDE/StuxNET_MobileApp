@@ -19,7 +19,7 @@ export default class SignUp extends React.Component {
   };
 
   handleSubmit = (
-    {id, password, phone, email, adress, date, name, surname},
+    {id, password, phone, email, adress, name, surname},
     {setErrors, setSubmitting},
   ) => {
     Api.Auth.register({
@@ -27,7 +27,7 @@ export default class SignUp extends React.Component {
       pw: password,
       firstName: name,
       lastName: surname,
-      birthDate: date,
+      birthDate: this.state.date,
       address: adress,
       phone: phone,
       mail: email,
