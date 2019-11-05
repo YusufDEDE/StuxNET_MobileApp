@@ -109,6 +109,7 @@ class Deposit extends React.Component {
           leftIconContainerStyle={{left: -13}}
           containerStyle={{marginTop: 30, width: 350}}
           keyboardType={'number-pad'}
+          maxLength={9}
           value={money}
           onChangeText={text => this.setState({money: text})}
         />

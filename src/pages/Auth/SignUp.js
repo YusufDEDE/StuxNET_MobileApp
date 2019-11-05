@@ -136,6 +136,7 @@ export default class SignUp extends React.Component {
                   leftIconContainerStyle={{left: -13}}
                   onChangeText={props.handleChange('id')}
                   onBlur={props.handleBlur('id')}
+                  maxLength={11}
                   value={props.values.id}
                   errorMessage={
                     props.touched.id && props.errors.id ? props.errors.id : null
@@ -148,6 +149,7 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="key" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={12}
                   rightIcon={
                     <Icon
                       name={this.state.isVisible ? 'eye-slash' : 'eye'}
@@ -175,6 +177,7 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="key" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={12}
                   rightIcon={
                     <Icon
                       name={this.state.isVisible ? 'eye-slash' : 'eye'}
@@ -202,6 +205,7 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={25}
                   onChangeText={props.handleChange('name')}
                   onBlur={props.handleBlur('name')}
                   value={props.values.name}
@@ -212,6 +216,7 @@ export default class SignUp extends React.Component {
                   placeholder="aurelio"
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
+                  maxLength={25}
                   containerStyle={{marginTop: 30}}
                   onChangeText={props.handleChange('surname')}
                   onBlur={props.handleBlur('surname')}
@@ -223,6 +228,7 @@ export default class SignUp extends React.Component {
                   placeholder="yeni mahalle / no : 3 /turgutlu / manisa"
                   leftIcon={<Icon name="map" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
+                  maxLength={50}
                   containerStyle={{marginTop: 30}}
                   onChangeText={props.handleChange('adress')}
                   onBlur={props.handleBlur('adress')}
@@ -235,6 +241,7 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="envelope" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={30}
                   onChangeText={props.handleChange('email')}
                   onBlur={props.handleBlur('email')}
                   value={props.values.email}
@@ -251,9 +258,10 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={10}
                   onChangeText={this.onChangeDate}
                   value={this.state.date}
-                  errorMessage={this.state.isDate}
+                  errorMessage={this.state.isDate.toString()}
                 />
                 <Input
                   label={'Telefon'}
@@ -265,6 +273,7 @@ export default class SignUp extends React.Component {
                   containerStyle={{marginTop: 30}}
                   onChangeText={props.handleChange('phone')}
                   onBlur={props.handleBlur('phone')}
+                  maxLength={10}
                   value={props.values.phone}
                   errorMessage={
                     props.touched.phone && props.errors.phone

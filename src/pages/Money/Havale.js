@@ -137,6 +137,7 @@ class Havale extends React.Component {
               containerStyle={{marginTop: 30, width: 350}}
               keyboardType={'number-pad'}
               value={targetAcc}
+              maxLength={8}
               onChangeText={item => {
                 this.setState({targetAcc: item});
               }}
@@ -145,6 +146,7 @@ class Havale extends React.Component {
               label={'Gönderilecek Ek no'}
               labelStyle={{color: 'gray'}}
               placeholder="54001"
+              maxLength={4}
               leftIconContainerStyle={{left: -13}}
               containerStyle={{marginTop: 30, width: 350}}
               keyboardType={'number-pad'}
@@ -161,6 +163,7 @@ class Havale extends React.Component {
               leftIconContainerStyle={{left: -13}}
               containerStyle={{marginTop: 30, width: 350}}
               keyboardType={'number-pad'}
+              maxLength={9}
               value={this.state.wantedMoney}
               onChangeText={item => {
                 this.setState({wantedMoney: item});

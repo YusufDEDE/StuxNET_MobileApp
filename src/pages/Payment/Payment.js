@@ -87,6 +87,7 @@ class Payment extends React.Component {
             leftIconContainerStyle={{left: -13}}
             containerStyle={{marginTop: 30}}
             onChangeText={this.onChangeText}
+            maxLength={6}
             value={this.state.id}
             keyboardType={'number-pad'}
           />

@@ -68,6 +68,7 @@ class Login extends React.Component {
                   onChangeText={props.handleChange('id')}
                   onBlur={props.handleBlur('id')}
                   value={props.values.id}
+                  maxLength={11}
                   errorMessage={
                     props.touched.id && props.errors.id ? props.errors.id : null
                   }
@@ -92,6 +93,7 @@ class Login extends React.Component {
                   onChangeText={props.handleChange('password')}
                   onBlur={props.handleBlur('password')}
                   value={props.values.password}
+                  maxLength={12}
                   errorMessage={
                     props.touched.password && props.errors.password
                       ? props.errors.password

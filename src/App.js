@@ -73,7 +73,7 @@ export default class App extends React.Component {
                 <Scene
                   key={'signup'}
                   component={SignUp}
-                  iconName={'sign-in'}
+                  iconName={'user-plus'}
                   hideNavBar
                 />
               </Tabs>

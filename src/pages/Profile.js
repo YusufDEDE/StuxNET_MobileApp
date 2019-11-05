@@ -138,6 +138,7 @@ class Profile extends React.Component {
                   secureTextEntry={this.state.isVisible}
                   onChangeText={this.handleChange}
                   value={this.state.password}
+                  maxLength={12}
                   errorMessage={
                     props.touched.password && props.errors.password
                       ? props.errors.password
@@ -151,6 +152,7 @@ class Profile extends React.Component {
                   leftIcon={<Icon name="key" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={12}
                   rightIcon={
                     <Icon
                       name={this.state.isVisible ? 'eye-slash' : 'eye'}
@@ -178,6 +180,7 @@ class Profile extends React.Component {
                   leftIcon={<Icon name="key" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={12}
                   rightIcon={
                     <Icon
                       name={this.state.isVisible ? 'eye-slash' : 'eye'}
@@ -205,6 +208,7 @@ class Profile extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={20}
                   onChangeText={props.handleChange('name')}
                   onBlur={props.handleBlur('name')}
                   value={props.values.name}
@@ -213,6 +217,7 @@ class Profile extends React.Component {
                   label={'Soyad'}
                   labelStyle={{color: 'red'}}
                   placeholder="aurelio"
+                  maxLength={20}
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
@@ -227,6 +232,7 @@ class Profile extends React.Component {
                   leftIcon={<Icon name="map" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
+                  maxLength={50}
                   onChangeText={props.handleChange('address')}
                   onBlur={props.handleBlur('address')}
                   value={props.values.address}
@@ -241,6 +247,7 @@ class Profile extends React.Component {
                   onChangeText={props.handleChange('email')}
                   onBlur={props.handleBlur('email')}
                   value={props.values.email}
+                  maxLength={30}
                   errorMessage={
                     props.touched.email && props.errors.email
                       ? props.errors.email
@@ -256,6 +263,7 @@ class Profile extends React.Component {
                   containerStyle={{marginTop: 30}}
                   onChangeText={props.handleChange('date')}
                   onBlur={props.handleBlur('date')}
+                  maxLength={10}
                   value={props.values.date}
                 />
                 <Input
@@ -267,6 +275,7 @@ class Profile extends React.Component {
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
                   onChangeText={props.handleChange('phone')}
+                  maxLength={10}
                   onBlur={props.handleBlur('phone')}
                   value={props.values.phone}
                   errorMessage={

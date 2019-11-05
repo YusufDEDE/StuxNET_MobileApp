@@ -149,6 +149,7 @@ class Virman extends React.Component {
           leftIconContainerStyle={{left: -13}}
           containerStyle={{marginTop: 30, width: 350}}
           keyboardType={'number-pad'}
+          maxLength={9}
           value={this.state.wantedMoney}
           onChangeText={item => {
             this.setState({wantedMoney: item});

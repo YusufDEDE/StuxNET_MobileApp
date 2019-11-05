@@ -112,6 +112,7 @@ class WithDraw extends React.Component {
           placeholder="300 ₺"
           leftIconContainerStyle={{left: -13}}
           containerStyle={{marginTop: 30, width: 350}}
+          maxLength={9}
           keyboardType={'number-pad'}
           value={wantedMoney}
           onChangeText={item => this.setState({wantedMoney: item})}
