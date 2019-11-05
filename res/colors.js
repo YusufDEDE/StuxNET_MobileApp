@@ -29,5 +29,6 @@ const colors = {
   secondaryDark: '#747474',
   white: '#FFFFFF',
   cyprus: '#0A2033',
+  red: '#F10000',
 };
 export default colors;

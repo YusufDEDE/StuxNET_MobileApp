@@ -1,4 +1,3 @@
-/* eslint-disable eqeqeq */
 /* eslint-disable comma-dangle */
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
@@ -11,8 +10,6 @@ import * as yup from 'yup';
 import Api from '~/api';
 import {Formik} from 'formik';
 import {colors} from 'res';
-
-const dateRegExp = /^\d+$/; //sadece sayılar
 
 export default class SignUp extends React.Component {
   state = {
@@ -44,55 +41,22 @@ export default class SignUp extends React.Component {
         Alert.alert('Kayıt olma başarısız!.', 'lütfen tekrar deneyiniz..');
         setSubmitting(false);
       });
-
-    setSubmitting(false);
   };
 
   onChangeDate = text => {
     const str = this.state.date;
-    if (
-      !str.endsWith('-') &&
-      (text.length === 7 || text.length === 4) &&
-      dateRegExp.test(text.slice(-1)) // '-' atmak için
-    ) {
-      text += '-';
+    if (!str.endsWith('.') && (text.length === 2 || text.length === 5)) {
+      text += '.';
     }
     this.setState(state => ({
       date:
-        (state.date.length === 7 || state.date.length === 4) &&
-        (text.lastIndexOf('-') !== 4 && text.lastIndexOf('-') !== 7)
-          ? (state.date += '-')
+        (state.date.length === 2 || state.date.length === 5) &&
+        (text.lastIndexOf('.') !== 5 &&
+          text.lastIndexOf('.') !== 2 &&
+          text.lastIndexOf('.') !== -1)
+          ? (state.date += '.')
           : text,
     }));
-    console.log('11111', this.state.isDate);
-  };
-
-  isValidDate = dateString => {
-    // First check for the pattern
-    if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
-      return false;
-    }
-
-    // Parse the date parts to integers
-    var parts = dateString.split('-');
-    var day = parseInt(parts[1], 10);
-    var month = parseInt(parts[0], 10);
-    var year = parseInt(parts[2], 10);
-
-    // Check the ranges of month and year
-    if (year < 1000 || year > 3000 || month == 0 || month > 12) {
-      return false;
-    }
-
-    var monthLength = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-
-    // Adjust for leap years
-    if (year % 400 == 0 || (year % 100 != 0 && year % 4 == 0)) {
-      monthLength[1] = 29;
-    }
-
-    // Check the range of the day
-    return day > 0 && day <= monthLength[month - 1];
   };
 
   render() {
@@ -205,7 +169,7 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
-                  maxLength={25}
+                  maxLength={11}
                   onChangeText={props.handleChange('name')}
                   onBlur={props.handleBlur('name')}
                   value={props.values.name}
@@ -216,7 +180,7 @@ export default class SignUp extends React.Component {
                   placeholder="aurelio"
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
-                  maxLength={25}
+                  maxLength={20}
                   containerStyle={{marginTop: 30}}
                   onChangeText={props.handleChange('surname')}
                   onBlur={props.handleBlur('surname')}
@@ -228,7 +192,7 @@ export default class SignUp extends React.Component {
                   placeholder="yeni mahalle / no : 3 /turgutlu / manisa"
                   leftIcon={<Icon name="map" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
-                  maxLength={50}
+                  maxLength={45}
                   containerStyle={{marginTop: 30}}
                   onChangeText={props.handleChange('adress')}
                   onBlur={props.handleBlur('adress')}
@@ -241,7 +205,7 @@ export default class SignUp extends React.Component {
                   leftIcon={<Icon name="envelope" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
-                  maxLength={30}
+                  maxLength={40}
                   onChangeText={props.handleChange('email')}
                   onBlur={props.handleBlur('email')}
                   value={props.values.email}
@@ -254,14 +218,14 @@ export default class SignUp extends React.Component {
                 <Input
                   label={'Doğum Tarihi'}
                   labelStyle={{color: 'red'}}
-                  placeholder="2011/11/11"
+                  placeholder="01.01.1990"
+                  keyboardType={'numeric'}
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
                   maxLength={10}
                   onChangeText={this.onChangeDate}
                   value={this.state.date}
-                  errorMessage={this.state.isDate.toString()}
                 />
                 <Input
                   label={'Telefon'}

@@ -1,5 +1,14 @@
+/* eslint-disable react-native/no-inline-styles */
+/* eslint-disable react/no-did-mount-set-state */
 import React from 'react';
-import {View, StyleSheet, StatusBar, FlatList, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  FlatList,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import {Button, ListItem} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {fonts, colors} from 'res';
@@ -9,9 +18,18 @@ import {fonts, colors} from 'res';
 class ListAccount extends React.Component {
   state = {
     testData: null,
+    loading: false,
   };
 
   keyExtractor = (item, index) => index.toString();
+
+  componentDidMount() {
+    const {accounts, user, setAccountList} = this.props.authStore;
+    setAccountList(user);
+    this.setState({
+      testData: accounts,
+    });
+  }
 
   renderItem = ({item}) => (
     <ListItem
@@ -31,14 +49,22 @@ class ListAccount extends React.Component {
 
   onPress = () => {
     const {accounts, user, setAccountList} = this.props.authStore;
-    setAccountList(user);
-    console.log(accounts);
+    this.setState({loading: true});
+    setAccountList(user)
+      .then(() => {
+        this.setState({loading: false});
+      })
+      .catch(() => {
+        this.setState({loading: false});
+      });
     this.setState({
       testData: accounts,
     });
   };
 
   render() {
+    const {testData, loading} = this.state;
+    console.log(testData);
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
@@ -46,15 +72,29 @@ class ListAccount extends React.Component {
         <Text style={styles.text}>Hesaplarım</Text>
         <View style={styles.accountsContainer}>
           <View style={styles.flatListContainer}>
-            <FlatList
-              keyExtractor={this.keyExtractor}
-              data={this.state.testData}
-              renderItem={this.renderItem}
-              nullable
-            />
+            {testData === null ? (
+              <Text style={styles.errorText}>Bekleniyor..</Text>
+            ) : testData.status === 404 || testData.status === false ? (
+              <Text style={styles.errorText}>
+                Üyeliğinize tanımlı hesap bulunamadı..
+              </Text>
+            ) : (
+              <FlatList
+                keyExtractor={this.keyExtractor}
+                data={this.state.testData}
+                renderItem={this.renderItem}
+                nullable
+              />
+            )}
           </View>
         </View>
-        <Button title={'Hesap Listele'} onPress={this.onPress} />
+        <View style={{flex: 1, marginTop: 20}}>
+          {loading ? (
+            <ActivityIndicator color={'blue'} size="large" />
+          ) : (
+            <Button title={'Hesap Listele'} onPress={this.onPress} />
+          )}
+        </View>
       </View>
     );
   }
@@ -89,6 +129,14 @@ const styles = StyleSheet.create({
   },
   accountsContainer: {
     width: '100%',
-    flex: 0.9,
+    marginTop: 20,
+    flex: 9,
+  },
+  errorText: {
+    margin: 20,
+    color: colors.red,
+    fontFamily: fonts.avenirMedium,
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

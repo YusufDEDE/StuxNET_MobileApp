@@ -3,7 +3,7 @@
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
 import {ScrollView, View, StyleSheet, Alert} from 'react-native';
-import {Input, Button, Text} from 'react-native-elements';
+import {Input, Button} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Actions} from 'react-native-router-flux';
 import * as yup from 'yup';
@@ -20,6 +20,22 @@ class Profile extends React.Component {
     password: '',
   };
 
+  onChangeDate = text => {
+    const str = this.state.date;
+    if (!str.endsWith('.') && (text.length === 2 || text.length === 5)) {
+      text += '.';
+    }
+    this.setState(state => ({
+      date:
+        (state.date.length === 2 || state.date.length === 5) &&
+        (text.lastIndexOf('.') !== 5 &&
+          text.lastIndexOf('.') !== 2 &&
+          text.lastIndexOf('.') !== -1)
+          ? (state.date += '.')
+          : text,
+    }));
+  };
+
   handleChange = text => {
     this.setState({password: text});
   };
@@ -29,7 +45,6 @@ class Profile extends React.Component {
     {setErrors, setSubmitting},
   ) => {
     const {userInfo, setAccountList} = this.props.authStore;
-    setSubmitting(true);
     if (this.state.password === userInfo.password) {
       Api.Auth.updateUser({
         tc: 77777777777,
@@ -42,7 +57,6 @@ class Profile extends React.Component {
         mail: email,
       })
         .then(res => {
-          console.log(res);
           setSubmitting(false);
           setAccountList(userInfo.tcNumber);
           Actions.home();
@@ -208,7 +222,7 @@ class Profile extends React.Component {
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
-                  maxLength={20}
+                  maxLength={11}
                   onChangeText={props.handleChange('name')}
                   onBlur={props.handleBlur('name')}
                   value={props.values.name}
@@ -232,7 +246,7 @@ class Profile extends React.Component {
                   leftIcon={<Icon name="map" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
-                  maxLength={50}
+                  maxLength={45}
                   onChangeText={props.handleChange('address')}
                   onBlur={props.handleBlur('address')}
                   value={props.values.address}
@@ -247,7 +261,7 @@ class Profile extends React.Component {
                   onChangeText={props.handleChange('email')}
                   onBlur={props.handleBlur('email')}
                   value={props.values.email}
-                  maxLength={30}
+                  maxLength={40}
                   errorMessage={
                     props.touched.email && props.errors.email
                       ? props.errors.email
@@ -257,14 +271,14 @@ class Profile extends React.Component {
                 <Input
                   label={'Doğum Tarihi'}
                   labelStyle={{color: 'red'}}
-                  placeholder="2011/11/11"
+                  placeholder="01.01.1990"
+                  keyboardType={'numeric'}
                   leftIcon={<Icon name="user" size={24} color="black" />}
                   leftIconContainerStyle={{left: -13}}
                   containerStyle={{marginTop: 30}}
-                  onChangeText={props.handleChange('date')}
-                  onBlur={props.handleBlur('date')}
                   maxLength={10}
-                  value={props.values.date}
+                  onChangeText={this.onChangeDate}
+                  value={this.state.date}
                 />
                 <Input
                   label={'Telefon'}

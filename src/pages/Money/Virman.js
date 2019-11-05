@@ -2,7 +2,15 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Picker,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {Button, Input} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import Api from '~/api';
@@ -13,10 +21,11 @@ import {fonts, colors} from 'res';
 @observer
 class Virman extends React.Component {
   state = {
-    accounts: [],
+    accounts: null,
     wantedMoney: '',
     acc: -1,
     targetAcc: -1,
+    loading: false,
   };
 
   componentDidMount() {
@@ -52,7 +61,8 @@ class Virman extends React.Component {
       ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
       : acc === targetAcc
       ? Alert.alert('İşlem Başarısız', 'Hedef hesap alıcı hesapla aynı olamaz!')
-      : Api.Auth.virman({
+      : this.setState({loading: true}) ||
+        Api.Auth.virman({
           tc: user,
           sendAddit: accounts[acc].additionalNo,
           recAddit: accounts[targetAcc].additionalNo,
@@ -65,30 +75,39 @@ class Virman extends React.Component {
               'Bankamızı kullandığınız için teşekkürler :)',
               [{text: 'TAMAM', onPress: () => Actions.pop()}],
             );
+            this.setState({loading: false});
           })
           .catch(err => {
             Alert.alert('Para Aktama İşlemi Başarısız.', err);
+            this.setState({loading: false});
           });
   };
 
   renderSenderPicker() {
-    console.log(this.state.accounts);
-    if (this.state.accounts === undefined) {
-      return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
-    }
-    return this.state.accounts.map((item, index) => {
+    const {accounts} = this.props.authStore;
+    if (accounts.status && accounts.status === 404) {
       return (
         <Picker.Item
-          key={index.toString()}
-          label={item.accNo + ' - ' + item.additionalNo}
-          value={index}
+          key="1"
+          label="Üyeliğinize tanımlı hesap bulunmamaktadır!!"
+          value="0"
         />
       );
-    });
+    } else {
+      return this.state.accounts.map((item, index) => {
+        return (
+          <Picker.Item
+            key={index.toString()}
+            label={item.accNo + ' - ' + item.additionalNo}
+            value={index}
+          />
+        );
+      });
+    }
   }
 
   renderGetterPicker() {
-    if (this.state.accounts === undefined) {
+    if (this.state.accounts === []) {
       return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
     }
     return this.state.accounts.map((item, index) => {
@@ -103,7 +122,7 @@ class Virman extends React.Component {
   }
 
   render() {
-    const {accounts, acc, targetAcc} = this.state;
+    const {accounts, acc, targetAcc, loading} = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
@@ -149,13 +168,17 @@ class Virman extends React.Component {
           leftIconContainerStyle={{left: -13}}
           containerStyle={{marginTop: 30, width: 350}}
           keyboardType={'number-pad'}
-          maxLength={9}
+          maxLength={5}
           value={this.state.wantedMoney}
           onChangeText={item => {
             this.setState({wantedMoney: item});
           }}
         />
-        <Button title={'Para Aktar'} onPress={this.onPress} />
+        {loading ? (
+          <ActivityIndicator color={'blue'} size="large" />
+        ) : (
+          <Button title={'Para Aktar'} onPress={this.onPress} />
+        )}
       </View>
     );
   }

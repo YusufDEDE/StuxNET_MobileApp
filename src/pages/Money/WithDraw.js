@@ -3,7 +3,15 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Picker,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {Button, Input} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {Actions} from 'react-native-router-flux';
@@ -17,6 +25,7 @@ class WithDraw extends React.Component {
     wantedMoney: '',
     accounts: [],
     account: -1,
+    loading: false,
   };
 
   componentDidMount() {
@@ -49,7 +58,8 @@ class WithDraw extends React.Component {
       ? Alert.alert('Para Çekme İşlemi Başarısız.', 'virgül kullanmayınız..')
       : value < wantedMoney
       ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
-      : Api.Auth.drawMoney({
+      : this.setState({loading: true}) ||
+        Api.Auth.drawMoney({
           tc: user,
           additNo: accounts[account].additionalNo,
           withdrawal: wantedMoney,
@@ -60,17 +70,25 @@ class WithDraw extends React.Component {
               'Bankamızı kullandığınız için teşekkürler :)',
             );
             setAccountList(user);
+            this.setState({loading: false});
             Actions.pop();
           })
           .catch(err => {
+            this.setState({loading: false});
             Alert.alert('Para Çekme İşlemi Başarısız.', err);
           });
   };
 
   renderPicker() {
-    console.log(this.state.accounts);
-    if (this.state.accounts === undefined) {
-      return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
+    const {accounts} = this.props.authStore;
+    if (accounts.status && accounts.status === 404) {
+      return (
+        <Picker.Item
+          key="1"
+          label="Üyeliğinize tanımlı hesap bulunmamaktadır!!"
+          value="0"
+        />
+      );
     }
     return this.state.accounts.map((item, index) => {
       return (
@@ -84,7 +102,7 @@ class WithDraw extends React.Component {
   }
 
   render() {
-    const {accounts, account, wantedMoney} = this.state;
+    const {accounts, account, wantedMoney, loading} = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
@@ -112,12 +130,16 @@ class WithDraw extends React.Component {
           placeholder="300 ₺"
           leftIconContainerStyle={{left: -13}}
           containerStyle={{marginTop: 30, width: 350}}
-          maxLength={9}
+          maxLength={5}
           keyboardType={'number-pad'}
           value={wantedMoney}
           onChangeText={item => this.setState({wantedMoney: item})}
         />
-        <Button title={'Para Çek'} onPress={this.onPress} />
+        {loading ? (
+          <ActivityIndicator color={'blue'} size="large" />
+        ) : (
+          <Button title={'Para Çek'} onPress={this.onPress} />
+        )}
       </View>
     );
   }

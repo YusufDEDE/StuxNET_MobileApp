@@ -10,6 +10,7 @@ import {
   Text,
   Alert,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import {Button, Input} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
@@ -21,11 +22,12 @@ import {fonts, colors} from 'res';
 @observer
 class Havale extends React.Component {
   state = {
-    accounts: [],
+    accounts: null,
     acc: -1,
     wantedMoney: '',
     targetAcc: null,
     targetAddit: null,
+    loading: false,
   };
 
   componentDidMount() {
@@ -59,7 +61,8 @@ class Havale extends React.Component {
       ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'virgül kullanmayınız..')
       : value[0] - wantedMoney < 0
       ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
-      : Api.Auth.havale({
+      : this.setState({loading: true}) ||
+        Api.Auth.havale({
           tc: user,
           sendAddit: accounts[acc].additionalNo,
           recAcc: targetAcc,
@@ -73,38 +76,47 @@ class Havale extends React.Component {
               'Bankamızı kullandığınız için teşekkürler :)',
               [{text: 'TAMAM', onPress: () => Actions.pop()}],
             );
+            this.setState({loading: false});
           })
           .catch(err => {
             console.log(err);
             Alert.alert('Hata!', 'Kod: 500 , Hedef Hesap Tanımsız!!');
+            this.setState({loading: false});
           });
   };
 
   renderPicker() {
-    console.log(this.state.accounts);
-    if (this.state.accounts === undefined) {
-      return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
-    }
-    return this.state.accounts.map((item, index) => {
+    const {accounts} = this.props.authStore;
+    if (accounts.status && accounts.status === 404) {
       return (
         <Picker.Item
-          key={index.toString()}
-          label={
-            item.accNo +
-            ' - ' +
-            item.additionalNo +
-            ' / ' +
-            item.Balance +
-            ' TRY'
-          }
-          value={index}
+          key="1"
+          label="Üyeliğinize tanımlı hesap bulunmamaktadır!!"
+          value="0"
         />
       );
-    });
+    } else {
+      return this.state.accounts.map((item, index) => {
+        return (
+          <Picker.Item
+            key={index.toString()}
+            label={
+              item.accNo +
+              ' - ' +
+              item.additionalNo +
+              ' / ' +
+              item.Balance +
+              ' TRY'
+            }
+            value={index}
+          />
+        );
+      });
+    }
   }
 
   render() {
-    const {accounts, acc, targetAcc} = this.state;
+    const {accounts, acc, targetAcc, loading} = this.state;
     return (
       <ScrollView keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
@@ -145,7 +157,7 @@ class Havale extends React.Component {
             <Input
               label={'Gönderilecek Ek no'}
               labelStyle={{color: 'gray'}}
-              placeholder="54001"
+              placeholder="5001"
               maxLength={4}
               leftIconContainerStyle={{left: -13}}
               containerStyle={{marginTop: 30, width: 350}}
@@ -163,13 +175,17 @@ class Havale extends React.Component {
               leftIconContainerStyle={{left: -13}}
               containerStyle={{marginTop: 30, width: 350}}
               keyboardType={'number-pad'}
-              maxLength={9}
+              maxLength={5}
               value={this.state.wantedMoney}
               onChangeText={item => {
                 this.setState({wantedMoney: item});
               }}
             />
-            <Button title={'Gönder'} onPress={this.onPress} />
+            {loading ? (
+              <ActivityIndicator color={'blue'} size="large" />
+            ) : (
+              <Button title={'Gönder'} onPress={this.onPress} />
+            )}
           </View>
         </View>
       </ScrollView>

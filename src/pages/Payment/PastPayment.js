@@ -1,6 +1,14 @@
+/* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {View, StyleSheet, StatusBar, FlatList, Text} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  FlatList,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import {Button, ListItem} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {fonts, colors} from 'res';
@@ -12,6 +20,7 @@ import Api from '~/api';
 class PastPayments extends React.Component {
   state = {
     testData: null,
+    loading: false,
   };
 
   keyExtractor = (item, index) => index.toString();
@@ -31,10 +40,11 @@ class PastPayments extends React.Component {
 
   renderItem = ({item}) => (
     <ListItem
+      titleStyle={{width: 210}}
       title={
         'Fatura Türü: ' +
         item.BillType +
-        '                    Fatura Numarası: ' +
+        '           Fatura Numarası: ' +
         item.BillNumber +
         '                      İşlem Tutarı : ' +
         item.Payment
@@ -58,15 +68,20 @@ class PastPayments extends React.Component {
 
   onPress = () => {
     const {user} = this.props.authStore;
+    this.setState({loading: true});
     Api.Auth.paymentTransactions({
       tc: user,
     })
       .then(res => {
         this.setState({
           testData: res,
+          loading: false,
         });
       })
-      .catch(err => console.warn(err));
+      .catch(err => {
+        this.setState({loading: true});
+        console.warn(err);
+      });
   };
 
   render() {
@@ -85,7 +100,11 @@ class PastPayments extends React.Component {
             />
           </View>
         </View>
-        <Button title={'İşlemleri Listele'} onPress={this.onPress} />
+        {this.state.loading ? (
+          <ActivityIndicator color={'blue'} size="large" />
+        ) : (
+          <Button title={'İşlemleri Listele'} onPress={this.onPress} />
+        )}
       </View>
     );
   }

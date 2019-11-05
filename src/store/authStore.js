@@ -21,15 +21,17 @@ class AuthStore {
   };
 
   @action
-  setAccountList = id => {
-    Api.Auth.listAccount({
+  setAccountList = async id => {
+    await Api.Auth.listAccount({
       tc: id,
     })
       .then(res => {
         this.accounts = res;
+        return res;
       })
       .catch(err => {
         console.log(err);
+        return err;
       });
     Api.Auth.updateUserList({tc: id})
       .then(res => {
@@ -40,13 +42,16 @@ class AuthStore {
       });
   };
   @action
-  setMoneyTransferList = id => {
-    Api.Auth.moneyTransferList({tc: id})
+  setMoneyTransferList = async id => {
+    await Api.Auth.moneyTransferList({tc: id})
       .then(res => {
         this.moneyTransferList = res.recordset;
+        console.log('33333', res, id);
+        return res;
       })
       .catch(err => {
         console.log(err);
+        return err;
       });
   };
 

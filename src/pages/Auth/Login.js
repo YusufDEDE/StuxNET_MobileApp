@@ -19,7 +19,11 @@ class Login extends React.Component {
   };
 
   handleSubmit = ({id, password}, {setErrors, setSubmitting}) => {
-    const {setUser, setAccountList} = this.props.authStore;
+    const {
+      setUser,
+      setAccountList,
+      setMoneyTransferList,
+    } = this.props.authStore;
 
     Api.Auth.login({
       tc: id,
@@ -28,6 +32,7 @@ class Login extends React.Component {
       .then(res => {
         setUser(id, res.token);
         setAccountList(id);
+        setMoneyTransferList(id);
         Alert.alert('giriş başarılı.', 'hoşgeldin :)');
         Actions.replace('drawer', {token: res.token});
         setSubmitting(false);

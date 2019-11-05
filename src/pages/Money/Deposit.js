@@ -3,7 +3,15 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Picker,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {Button, Input} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {Actions} from 'react-native-router-flux';
@@ -17,6 +25,7 @@ class Deposit extends React.Component {
     money: '',
     accounts: [],
     account: -1,
+    loading: false,
   };
 
   componentDidMount() {
@@ -42,12 +51,14 @@ class Deposit extends React.Component {
       : money <= 0
       ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
       : money > 0 && !money.includes(',')
-      ? Api.Auth.depositMoney({
+      ? this.setState({loading: true}) ||
+        Api.Auth.depositMoney({
           tc: user,
           additNo: accounts[account].additionalNo,
           deposit: money,
         })
           .then(res => {
+            this.setState({loading: false});
             Alert.alert(
               'Para Yatırma İşlemi Başarılı.',
               'Bankamızı kullandığınız için teşekkürler :)',
@@ -56,6 +67,7 @@ class Deposit extends React.Component {
             Actions.pop();
           })
           .catch(err => {
+            this.setState({loading: false});
             Alert.alert('Para Yatırma İşlemi Başarısız.', err);
           })
       : Alert.alert(
@@ -65,8 +77,15 @@ class Deposit extends React.Component {
   };
 
   renderPicker() {
-    if (this.state.accounts === undefined) {
-      return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
+    const {accounts} = this.props.authStore;
+    if (accounts.status && accounts.status === 404) {
+      return (
+        <Picker.Item
+          key="1"
+          label="Üyeliğinize tanımlı hesap bulunmamaktadır!!"
+          value="0"
+        />
+      );
     }
     return this.state.accounts.map((item, index) => {
       return (
@@ -80,7 +99,7 @@ class Deposit extends React.Component {
   }
 
   render() {
-    const {accounts, account, money} = this.state;
+    const {accounts, account, money, loading} = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
@@ -109,11 +128,15 @@ class Deposit extends React.Component {
           leftIconContainerStyle={{left: -13}}
           containerStyle={{marginTop: 30, width: 350}}
           keyboardType={'number-pad'}
-          maxLength={9}
+          maxLength={5}
           value={money}
           onChangeText={text => this.setState({money: text})}
         />
-        <Button title={'Para Yatır'} onPress={this.onPress} />
+        {loading ? (
+          <ActivityIndicator color={'blue'} size="large" />
+        ) : (
+          <Button title={'Para Yatır'} onPress={this.onPress} />
+        )}
       </View>
     );
   }

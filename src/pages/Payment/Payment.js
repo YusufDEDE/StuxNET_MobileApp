@@ -2,7 +2,15 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
 import React from 'react';
-import {View, StyleSheet, StatusBar, FlatList, Text, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  FlatList,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {Button, ListItem, Input} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
 import {Actions} from 'react-native-router-flux';
@@ -16,6 +24,7 @@ class Payment extends React.Component {
   state = {
     testData: null,
     id: '',
+    loading: false,
   };
 
   keyExtractor = (item, index) => index.toString();
@@ -37,15 +46,18 @@ class Payment extends React.Component {
 
   onPress = id => {
     //const {accounts, user, setAccountList} = this.props.authStore;
+    this.setState({loading: true});
     Api.Auth.payment({subsID: id})
       .then(res => {
         res.status === 404
-          ? Alert.alert(
-              'Ödeme işlemi başarısız!',
+          ? this.setState({loading: false}) ||
+            Alert.alert(
+              'Fatura Bulunamadı!!',
               'Girdiğiniz abone numarasını kontrol ediniz..',
             )
           : this.setState({
               testData: res,
+              loading: false,
             });
       })
       .catch(() => {
@@ -53,6 +65,7 @@ class Payment extends React.Component {
           'Ödeme işlemi başarısız!',
           'Girdiğiniz abone numarasını kontrol ediniz..',
         );
+        this.setState({loading: false});
       });
   };
 
@@ -87,15 +100,19 @@ class Payment extends React.Component {
             leftIconContainerStyle={{left: -13}}
             containerStyle={{marginTop: 30}}
             onChangeText={this.onChangeText}
-            maxLength={6}
+            maxLength={5}
             value={this.state.id}
             keyboardType={'number-pad'}
           />
         </View>
-        <Button
-          title={'Ödemeleri Listele'}
-          onPress={() => this.onPress(this.state.id)}
-        />
+        {this.state.loading ? (
+          <ActivityIndicator color={'blue'} size="large" />
+        ) : (
+          <Button
+            title={'Faturaları Listele'}
+            onPress={() => this.onPress(this.state.id)}
+          />
+        )}
       </View>
     );
   }
