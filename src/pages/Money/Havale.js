@@ -35,7 +35,7 @@ class Havale extends React.Component {
     // eslint-disable-next-line react/no-did-mount-set-state
     this.setState({
       accounts: this.props.authStore.accounts,
-      account: accounts.status ? -1 : 0,
+      acc: accounts.status ? -1 : 0,
     });
   }
 
