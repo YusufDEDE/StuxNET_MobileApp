@@ -29,58 +29,69 @@ class Virman extends React.Component {
   };
 
   componentDidMount() {
+    const {accounts} = this.props.authStore;
     // eslint-disable-next-line react/no-did-mount-set-state
     this.setState({
       accounts: this.props.authStore.accounts,
+      acc: accounts.status ? -1 : 0,
+      targetAcc: accounts.status ? -1 : 0,
     });
   }
 
   onPress = () => {
     const {accounts, wantedMoney, acc, targetAcc} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    const value = accounts[acc].Balance;
 
-    wantedMoney.indexOf('.') !== -1 &&
-    wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
-      ? Alert.alert(
-          'Hoaydaa',
-          'Miraderim alt tarafı para gönderecen fantazi yapma!',
-        )
-      : wantedMoney.includes(' ') || wantedMoney.includes('-')
-      ? Alert.alert(
-          'Oooooooopsss',
-          'Elf gözlerim tanımsız simgeler görüyor :) ',
-        )
-      : wantedMoney <= 0
-      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
-      : wantedMoney === ''
-      ? Alert.alert('Para miktarı boş geçilemez!')
-      : wantedMoney.includes(',')
-      ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'virgül kullanmayınız..')
-      : value - wantedMoney < 0
-      ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
-      : acc === targetAcc
-      ? Alert.alert('İşlem Başarısız', 'Hedef hesap alıcı hesapla aynı olamaz!')
-      : this.setState({loading: true}) ||
-        Api.Auth.virman({
-          tc: user,
-          sendAddit: accounts[acc].additionalNo,
-          recAddit: accounts[targetAcc].additionalNo,
-          money: wantedMoney,
-        })
-          .then(res => {
-            setAccountList(user);
-            Alert.alert(
-              'Para Aktarma İşlemi Başarılı.',
-              'Bankamızı kullandığınız için teşekkürler :)',
-              [{text: 'TAMAM', onPress: () => Actions.pop()}],
-            );
-            this.setState({loading: false});
+    if (acc === -1 || targetAcc === -1) {
+      Alert.alert('Hesap Seçmedin!', 'Lütfen hesap seçmeyi unutma.. :) ');
+    } else {
+      const value = accounts[acc].Balance;
+
+      wantedMoney.indexOf('.') !== -1 &&
+      wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
+        ? Alert.alert('Hoaydaa', 'Fantastik şeyler deniyorsun. Yapma.')
+        : wantedMoney.includes(' ') || wantedMoney.includes('-')
+        ? Alert.alert(
+            'Oooooooopsss',
+            'Elf gözlerim tanımsız simgeler görüyor :) ',
+          )
+        : wantedMoney <= 0
+        ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+        : wantedMoney === '' || wantedMoney === '.'
+        ? Alert.alert('Para miktarı boş geçilemez!')
+        : wantedMoney.includes(',')
+        ? Alert.alert(
+            'Para Aktarma İşlemi Başarısız.',
+            'virgül kullanmayınız..',
+          )
+        : value - wantedMoney < 0
+        ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
+        : acc === targetAcc
+        ? Alert.alert(
+            'İşlem Başarısız',
+            'Hedef hesap alıcı hesapla aynı olamaz!',
+          )
+        : this.setState({loading: true}) ||
+          Api.Auth.virman({
+            tc: user,
+            sendAddit: accounts[acc].additionalNo,
+            recAddit: accounts[targetAcc].additionalNo,
+            money: wantedMoney,
           })
-          .catch(err => {
-            Alert.alert('Para Aktama İşlemi Başarısız.', err);
-            this.setState({loading: false});
-          });
+            .then(res => {
+              setAccountList(user);
+              Alert.alert(
+                'Para Aktarma İşlemi Başarılı.',
+                'Bankamızı kullandığınız için teşekkürler :)',
+                [{text: 'TAMAM', onPress: () => Actions.pop()}],
+              );
+              this.setState({loading: false});
+            })
+            .catch(err => {
+              Alert.alert('Para Aktama İşlemi Başarısız.', err);
+              this.setState({loading: false});
+            });
+    }
   };
 
   renderSenderPicker() {
@@ -94,7 +105,7 @@ class Virman extends React.Component {
         />
       );
     } else {
-      return this.state.accounts.map((item, index) => {
+      return accounts.map((item, index) => {
         return (
           <Picker.Item
             key={index.toString()}
@@ -107,10 +118,11 @@ class Virman extends React.Component {
   }
 
   renderGetterPicker() {
-    if (this.state.accounts === []) {
+    const {accounts} = this.props.authStore;
+    if (accounts.status && accounts.status === 404) {
       return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
     }
-    return this.state.accounts.map((item, index) => {
+    return accounts.map((item, index) => {
       return (
         <Picker.Item
           key={index.toString()}

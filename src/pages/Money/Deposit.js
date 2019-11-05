@@ -38,42 +38,49 @@ class Deposit extends React.Component {
     const {accounts, account, money} = this.state;
     const {user, setAccountList} = this.props.authStore;
 
-    money.indexOf('.') !== -1 && money.includes('.', money.indexOf('.') + 1)
-      ? Alert.alert(
-          'Hoaydaa',
-          'Biladerim alt tarafı para gönderecen fantazi yapma!',
-        )
-      : money.includes(' ') || money.includes('-')
-      ? Alert.alert(
-          'Oooooooopsss',
-          'Elf gözlerim tanımsız simgeler görüyor :) ',
-        )
-      : money <= 0
-      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
-      : money > 0 && !money.includes(',')
-      ? this.setState({loading: true}) ||
-        Api.Auth.depositMoney({
-          tc: user,
-          additNo: accounts[account].additionalNo,
-          deposit: money,
-        })
-          .then(res => {
-            this.setState({loading: false});
-            Alert.alert(
-              'Para Yatırma İşlemi Başarılı.',
-              'Bankamızı kullandığınız için teşekkürler :)',
-            );
-            setAccountList(user);
-            Actions.pop();
+    if (account === -1) {
+      Alert.alert(
+        'Hesap Tanımsız..',
+        'İşleme devam etmek için lütfen hesap seçiniz..',
+      );
+    } else {
+      money.indexOf('.') !== -1 && money.includes('.', money.indexOf('.') + 1)
+        ? Alert.alert(
+            'Hoaydaa',
+            'Biladerim alt tarafı para gönderecen fantazi yapma!',
+          )
+        : money.includes(' ') || money.includes('-')
+        ? Alert.alert(
+            'Oooooooopsss',
+            'Elf gözlerim tanımsız simgeler görüyor :) ',
+          )
+        : money <= 0
+        ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+        : money > 0 && !money.includes(',')
+        ? this.setState({loading: true}) ||
+          Api.Auth.depositMoney({
+            tc: user,
+            additNo: accounts[account].additionalNo,
+            deposit: money,
           })
-          .catch(err => {
-            this.setState({loading: false});
-            Alert.alert('Para Yatırma İşlemi Başarısız.', err);
-          })
-      : Alert.alert(
-          'Para Yatırma İşlemi Başarısız.',
-          'Lütfen yatırmak istediğiniz tutarı gözden geçirin ve virgül kullanmayın!',
-        );
+            .then(res => {
+              this.setState({loading: false});
+              Alert.alert(
+                'Para Yatırma İşlemi Başarılı.',
+                'Bankamızı kullandığınız için teşekkürler :)',
+              );
+              setAccountList(user);
+              Actions.pop();
+            })
+            .catch(err => {
+              this.setState({loading: false});
+              Alert.alert('Para Yatırma İşlemi Başarısız.', err);
+            })
+        : Alert.alert(
+            'Para Yatırma İşlemi Başarısız.',
+            'Lütfen yatırmak istediğiniz tutarı gözden geçirin ve virgül kullanmayın!',
+          );
+    }
   };
 
   renderPicker() {

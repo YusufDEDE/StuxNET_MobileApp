@@ -1,9 +1,11 @@
+/* eslint-disable react/no-did-mount-set-state */
 import React from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 import colors from 'res/colors';
 import Icon from 'react-native-vector-icons/Feather';
 import Avatar from 'rn-colorful-avatar';
 import fonts from 'res/fonts';
+import {inject, observer} from 'mobx-react';
 import {ScaledSheet} from 'react-native-size-matters';
 import {
   Collapse,
@@ -12,6 +14,8 @@ import {
 } from 'accordion-collapse-react-native';
 import MenuItem from './MenuItem';
 
+@inject('authStore')
+@observer
 class DrawerContent extends React.Component {
   constructor(props) {
     super(props);
@@ -19,13 +23,30 @@ class DrawerContent extends React.Component {
       pressed: false,
     };
   }
+  state = {
+    name: 'isim',
+    surname: 'soyisim',
+  };
+
+  componentDidMount() {
+    if (this.props.authStore.userInfo !== null) {
+      const {firstName, lastName} = this.props.authStore.userInfo;
+      this.setState({
+        name: firstName,
+        surname: lastName,
+      });
+    }
+  }
   render() {
+    const {name, surname} = this.state;
     return (
       <SafeAreaView style={styles.container}>
         <View style={styles.topDrawer}>
-          <Avatar circle={true} size={60} name={'KullanıcıAdı'} lang="tr-TR" />
+          <Avatar circle={true} size={60} name={name} lang="tr-TR" />
           <View style={styles.text}>
-            <Text style={styles.name}>Kullanıcı Adı</Text>
+            <Text style={styles.name}>
+              {name} {surname}
+            </Text>
           </View>
         </View>
         <View style={styles.bottomDrawer}>

@@ -47,6 +47,11 @@ export default class SignUp extends React.Component {
     const str = this.state.date;
     if (!str.endsWith('.') && (text.length === 2 || text.length === 5)) {
       text += '.';
+    } else if (
+      (text.length === 3 || text.length === 6) &&
+      !text.endsWith('.')
+    ) {
+      text = this.state.date + '.';
     }
     this.setState(state => ({
       date:
@@ -87,6 +92,14 @@ export default class SignUp extends React.Component {
               .string('Mail adresi geçersiz')
               .email('Geçersiz mail!')
               .required('Bu alan boş geçilemez.'),
+            name: yup
+              .string('İsim adresi geçersiz')
+              .required('Bu alan boş geçilemez.')
+              .min(2, 'İsim en az 2 harf olmalıdır.'),
+            surname: yup
+              .string('Soyisim adresi geçersiz')
+              .required('Bu alan boş geçilemez.')
+              .min(2, 'Soyisim en az 2 harf olmalıdır.'),
           })}>
           {props => (
             <React.Fragment>
@@ -173,6 +186,11 @@ export default class SignUp extends React.Component {
                   onChangeText={props.handleChange('name')}
                   onBlur={props.handleBlur('name')}
                   value={props.values.name}
+                  errorMessage={
+                    props.touched.name && props.errors.name
+                      ? props.errors.name
+                      : null
+                  }
                 />
                 <Input
                   label={'Soyad'}
@@ -185,6 +203,11 @@ export default class SignUp extends React.Component {
                   onChangeText={props.handleChange('surname')}
                   onBlur={props.handleBlur('surname')}
                   value={props.values.surname}
+                  errorMessage={
+                    props.touched.surname && props.errors.surname
+                      ? props.errors.surname
+                      : null
+                  }
                 />
                 <Input
                   label={'Adres'}

@@ -24,6 +24,7 @@ export function request(method, path, params = {}, subdomain) {
     },
   }).then(response => {
     if (response.data.status === 500) {
+      console.log('hata', response);
       return Promise.reject('Yanlış tc veya şifre!!!!');
     } else {
       console.log('aaa', response);

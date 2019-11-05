@@ -40,7 +40,7 @@ export default class MoneyTransferPopup extends Component {
       <BaseModal
         ref={this.onRef}
         visible
-        modalAnimation={animation}
+        modalAnimation={null}
         onTouchOutside={this.dismiss}
         width={0.9}
         overlayPointerEvents="auto"
@@ -65,7 +65,7 @@ export default class MoneyTransferPopup extends Component {
           )}
         </View>
         <View style={styles.bottomContainer}>
-          <Button title={'TAMAM'} onPressIn={Actions.pop} />
+          <Button title={'TAMAM'} onPressIn={this.dismiss} type={'outline'} />
         </View>
       </BaseModal>
     );

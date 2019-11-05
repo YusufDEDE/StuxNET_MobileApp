@@ -17,6 +17,7 @@ import {Actions} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Api from '~/api';
 import {fonts, colors} from 'res';
+import {number} from 'prop-types';
 
 @inject('authStore')
 @observer
@@ -40,33 +41,47 @@ class Payment extends React.Component {
       bottomDivider
       chevron
       style={styles.flatListItem}
-      onPress={() => Actions.jump('billPopup', {item})}
+      onPress={() => {
+        this.props.authStore.accounts.status === 404
+          ? Alert.alert('İsmail abi nere gidiyon?.', 'Hesap açmayı unuttun :)')
+          : Actions.jump('billPopup', {item});
+      }}
     />
   );
 
   onPress = id => {
-    //const {accounts, user, setAccountList} = this.props.authStore;
     this.setState({loading: true});
-    Api.Auth.payment({subsID: id})
-      .then(res => {
-        res.status === 404
-          ? this.setState({loading: false}) ||
-            Alert.alert(
-              'Fatura Bulunamadı!!',
-              'Girdiğiniz abone numarasını kontrol ediniz..',
-            )
-          : this.setState({
-              testData: res,
-              loading: false,
-            });
-      })
-      .catch(() => {
-        Alert.alert(
-          'Ödeme işlemi başarısız!',
-          'Girdiğiniz abone numarasını kontrol ediniz..',
-        );
-        this.setState({loading: false});
-      });
+    if (
+      id.includes(' ') ||
+      id.includes('.') ||
+      id.includes(',') ||
+      id.includes('-') ||
+      id === ''
+    ) {
+      Alert.alert('Lütfen tekrar deneyin.', 'Hatalı giriş yaptınız..');
+      this.setState({loading: false});
+    } else {
+      Api.Auth.payment({subsID: id})
+        .then(res => {
+          res.status === 404
+            ? this.setState({loading: false}) ||
+              Alert.alert(
+                'Fatura Bulunamadı!!',
+                'Girdiğiniz abone numarasını kontrol ediniz..',
+              )
+            : this.setState({
+                testData: res,
+                loading: false,
+              });
+        })
+        .catch(() => {
+          Alert.alert(
+            'Ödeme işlemi başarısız!',
+            'Girdiğiniz abone numarasını kontrol ediniz..',
+          );
+          this.setState({loading: false});
+        });
+    }
   };
 
   onChangeText = text => {

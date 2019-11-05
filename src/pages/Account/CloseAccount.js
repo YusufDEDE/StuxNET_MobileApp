@@ -16,45 +16,63 @@ class CloseAccount extends React.Component {
     account: -1,
   };
   componentDidMount() {
+    const {accounts} = this.props.authStore;
     this.setState({
       accounts: this.props.authStore.accounts,
+      account: accounts.status ? -1 : 0,
     });
   }
   onPress = () => {
     const {accounts, account} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    Api.Auth.deleteAccount({
-      tc: user,
-      additNo: accounts[account].additionalNo,
-    })
-      .then(res => {
-        console.log('del' + res);
-        Alert.alert(
-          'Hesap Kapatıldı.',
-          'Bankamızı kullandığınız için teşekkürler.',
-        );
-        Actions.pop();
-        setAccountList(user);
+    if (account === -1) {
+      Alert.alert(
+        'Hesap Tanımsız..',
+        'İşleme devam etmek için lütfen hesap seçiniz..',
+      );
+    } else {
+      Api.Auth.deleteAccount({
+        tc: user,
+        additNo: accounts[account].additionalNo,
       })
-      .catch(err => {
-        Alert.alert('işlem başarısız.', 'takrar deneyiniz..');
-        console.log(err);
-      });
+        .then(res => {
+          console.log('del' + res);
+          Alert.alert(
+            'Hesap Kapatıldı.',
+            'Bankamızı kullandığınız için teşekkürler.',
+          );
+          Actions.pop();
+          setAccountList(user);
+        })
+        .catch(err => {
+          Alert.alert('işlem başarısız.', 'takrar deneyiniz..');
+          console.log(err);
+        });
+    }
   };
 
   renderPicker() {
-    if (this.state.accounts === undefined) {
-      return <Picker.Item key="1" label="seçimlerinizi yapınız" value="0" />;
-    }
-    return this.state.accounts.map((item, index) => {
+    const {accounts} = this.props.authStore;
+
+    if (accounts.status && accounts.status === 404) {
       return (
         <Picker.Item
-          key={index.toString()}
-          label={item.accNo + ' - ' + item.additionalNo}
-          value={index}
+          key="1"
+          label="Üyeliğinize tanımlı hesap bulunmamaktadır!!"
+          value="0"
         />
       );
-    });
+    } else {
+      return accounts.map((item, index) => {
+        return (
+          <Picker.Item
+            key={index.toString()}
+            label={item.accNo + ' - ' + item.additionalNo}
+            value={index}
+          />
+        );
+      });
+    }
   }
 
   render() {

@@ -31,11 +31,20 @@ class Login extends React.Component {
     })
       .then(res => {
         setUser(id, res.token);
-        setAccountList(id);
         setMoneyTransferList(id);
-        Alert.alert('giriş başarılı.', 'hoşgeldin :)');
-        Actions.replace('drawer', {token: res.token});
-        setSubmitting(false);
+        setAccountList(id)
+          .then(() => {
+            Alert.alert('giriş başarılı.', 'hoşgeldin :)', [
+              {
+                text: 'TAMAM',
+                onPress: () => Actions.replace('drawer', {token: res.token}),
+              },
+            ]);
+            setSubmitting(false);
+          })
+          .catch(() => {
+            setSubmitting(false);
+          });
       })
       .catch(err => {
         Alert.alert('giriş başarısız.', err);

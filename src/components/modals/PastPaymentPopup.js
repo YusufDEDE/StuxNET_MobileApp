@@ -65,7 +65,7 @@ export default class PastPaymentPopup extends Component {
           )}
         </View>
         <View style={styles.bottomContainer}>
-          <Button title={'TAMAM'} onPressIn={Actions.pop} />
+          <Button title={'TAMAM'} onPressIn={this.dismiss} />
         </View>
       </BaseModal>
     );

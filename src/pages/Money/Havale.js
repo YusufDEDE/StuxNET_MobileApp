@@ -31,58 +31,68 @@ class Havale extends React.Component {
   };
 
   componentDidMount() {
+    const {accounts} = this.props.authStore;
     // eslint-disable-next-line react/no-did-mount-set-state
     this.setState({
       accounts: this.props.authStore.accounts,
+      account: accounts.status ? -1 : 0,
     });
   }
 
   onPress = () => {
     const {wantedMoney, targetAcc, targetAddit, accounts, acc} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    const value = accounts[acc].Balance;
 
-    wantedMoney.indexOf('.') !== -1 &&
-    wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
-      ? Alert.alert(
-          'Hoaydaa',
-          'Biladerim alt tarafı para gönderecen fantazi yapma!',
-        )
-      : wantedMoney.includes(' ') || wantedMoney.includes('-')
-      ? Alert.alert(
-          'Oooooooopsss',
-          'Elf gözlerim tanımsız simgeler görüyor :) ',
-        )
-      : wantedMoney <= 0
-      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
-      : wantedMoney === ''
-      ? Alert.alert('Para miktarı boş geçilemez!')
-      : wantedMoney.includes(',')
-      ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'virgül kullanmayınız..')
-      : value[0] - wantedMoney < 0
-      ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
-      : this.setState({loading: true}) ||
-        Api.Auth.havale({
-          tc: user,
-          sendAddit: accounts[acc].additionalNo,
-          recAcc: targetAcc,
-          recAddit: targetAddit,
-          money: wantedMoney,
-        })
-          .then(res => {
-            setAccountList(user);
-            Alert.alert(
-              'Para Aktarma İşlemi Başarılı.',
-              'Bankamızı kullandığınız için teşekkürler :)',
-              [{text: 'TAMAM', onPress: () => Actions.pop()}],
-            );
-            this.setState({loading: false});
+    if (acc === -1 || targetAcc === -1) {
+      Alert.alert('Hesap Seçmedin!', 'Lütfen hesap seçmeyi unutma.. :) ');
+    } else {
+      const value = accounts[acc].Balance;
+
+      wantedMoney.indexOf('.') !== -1 &&
+      wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
+        ? Alert.alert(
+            'Hoaydaa',
+            'Biladerim alt tarafı para gönderecen fantazi yapma!',
+          )
+        : wantedMoney.includes(' ') || wantedMoney.includes('-')
+        ? Alert.alert(
+            'Oooooooopsss',
+            'Elf gözlerim tanımsız simgeler görüyor :) ',
+          )
+        : wantedMoney <= 0
+        ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+        : wantedMoney === ''
+        ? Alert.alert('Para miktarı boş geçilemez!')
+        : wantedMoney.includes(',')
+        ? Alert.alert(
+            'Para Aktarma İşlemi Başarısız.',
+            'virgül kullanmayınız..',
+          )
+        : value[0] - wantedMoney < 0
+        ? Alert.alert('Para Aktarma İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
+        : this.setState({loading: true}) ||
+          Api.Auth.havale({
+            tc: user,
+            sendAddit: accounts[acc].additionalNo,
+            recAcc: targetAcc,
+            recAddit: targetAddit,
+            money: wantedMoney,
           })
-          .catch(err => {
-            console.log(err);
-            Alert.alert('Hata!', 'Kod: 500 , Hedef Hesap Tanımsız!!');
-            this.setState({loading: false});
-          });
+            .then(res => {
+              setAccountList(user);
+              Alert.alert(
+                'Para Aktarma İşlemi Başarılı.',
+                'Bankamızı kullandığınız için teşekkürler :)',
+                [{text: 'TAMAM', onPress: () => Actions.pop()}],
+              );
+              this.setState({loading: false});
+            })
+            .catch(err => {
+              console.log(err);
+              Alert.alert('Hata!', 'Kod: 500 , Hedef Hesap Tanımsız!!');
+              this.setState({loading: false});
+            });
+    }
   };
 
   renderPicker() {
@@ -96,7 +106,7 @@ class Havale extends React.Component {
         />
       );
     } else {
-      return this.state.accounts.map((item, index) => {
+      return accounts.map((item, index) => {
         return (
           <Picker.Item
             key={index.toString()}

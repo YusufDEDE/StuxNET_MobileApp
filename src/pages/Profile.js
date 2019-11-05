@@ -18,12 +18,18 @@ class Profile extends React.Component {
   state = {
     isVisible: true,
     password: '',
+    date: '',
   };
 
   onChangeDate = text => {
     const str = this.state.date;
     if (!str.endsWith('.') && (text.length === 2 || text.length === 5)) {
       text += '.';
+    } else if (
+      (text.length === 3 || text.length === 6) &&
+      !text.endsWith('.')
+    ) {
+      text = this.state.date + '.';
     }
     this.setState(state => ({
       date:
@@ -62,6 +68,7 @@ class Profile extends React.Component {
           Actions.home();
         })
         .catch(err => {
+          console.log(err);
           setSubmitting(false);
           setErrors({id: err.message});
         });

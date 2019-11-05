@@ -8,6 +8,7 @@ import {
   FlatList,
   Text,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {Button, ListItem} from 'react-native-elements';
 import {inject, observer} from 'mobx-react';
@@ -63,7 +64,9 @@ class PastPayments extends React.Component {
   );
 
   handlePress = item => {
-    Actions.jump('pastPaymentPopup', {item});
+    this.props.authStore.accounts.status === 404
+      ? Alert.alert('İsmail abi nere gidiyon?.', 'Hesap açmayı unuttun :)')
+      : Actions.jump('pastPaymentPopup', {item});
   };
 
   onPress = () => {

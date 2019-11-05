@@ -37,46 +37,53 @@ class WithDraw extends React.Component {
   onPress = () => {
     const {accounts, account, wantedMoney} = this.state;
     const {user, setAccountList} = this.props.authStore;
-    const value = accounts[account].Balance;
 
-    wantedMoney.indexOf('.') !== -1 &&
-    wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
-      ? Alert.alert(
-          'Hoaydaa',
-          'Biladerim alt tarafı para gönderecen fantazi yapma!',
-        )
-      : wantedMoney.includes(' ') || wantedMoney.includes('-')
-      ? Alert.alert(
-          'Oooooooopsss',
-          'Elf gözlerim tanımsız simgeler görüyor :) ',
-        )
-      : wantedMoney <= 0
-      ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
-      : wantedMoney === ''
-      ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Değer girmediniz :)')
-      : wantedMoney.includes(',')
-      ? Alert.alert('Para Çekme İşlemi Başarısız.', 'virgül kullanmayınız..')
-      : value < wantedMoney
-      ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
-      : this.setState({loading: true}) ||
-        Api.Auth.drawMoney({
-          tc: user,
-          additNo: accounts[account].additionalNo,
-          withdrawal: wantedMoney,
-        })
-          .then(res => {
-            Alert.alert(
-              'Para Çekme İşlemi Başarılı.',
-              'Bankamızı kullandığınız için teşekkürler :)',
-            );
-            setAccountList(user);
-            this.setState({loading: false});
-            Actions.pop();
+    if (account === -1) {
+      Alert.alert(
+        'Hesap Tanımsız..',
+        'İşleme devam etmek için lütfen hesap seçiniz..',
+      );
+    } else {
+      const value = accounts[account].Balance;
+      wantedMoney.indexOf('.') !== -1 &&
+      wantedMoney.includes('.', wantedMoney.indexOf('.') + 1)
+        ? Alert.alert(
+            'Hoaydaa',
+            'Biladerim alt tarafı para gönderecen fantazi yapma!',
+          )
+        : wantedMoney.includes(' ') || wantedMoney.includes('-')
+        ? Alert.alert(
+            'Oooooooopsss',
+            'Elf gözlerim tanımsız simgeler görüyor :) ',
+          )
+        : wantedMoney <= 0
+        ? Alert.alert('Oooooooopsss', 'Sıfır para gönderemezsiniz :) ')
+        : wantedMoney === ''
+        ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Değer girmediniz :)')
+        : wantedMoney.includes(',')
+        ? Alert.alert('Para Çekme İşlemi Başarısız.', 'virgül kullanmayınız..')
+        : value < wantedMoney
+        ? Alert.alert('Para Çekme İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
+        : this.setState({loading: true}) ||
+          Api.Auth.drawMoney({
+            tc: user,
+            additNo: accounts[account].additionalNo,
+            withdrawal: wantedMoney,
           })
-          .catch(err => {
-            this.setState({loading: false});
-            Alert.alert('Para Çekme İşlemi Başarısız.', err);
-          });
+            .then(res => {
+              Alert.alert(
+                'Para Çekme İşlemi Başarılı.',
+                'Bankamızı kullandığınız için teşekkürler :)',
+              );
+              setAccountList(user);
+              this.setState({loading: false});
+              Actions.pop();
+            })
+            .catch(err => {
+              this.setState({loading: false});
+              Alert.alert('Para Çekme İşlemi Başarısız.', err);
+            });
+    }
   };
 
   renderPicker() {

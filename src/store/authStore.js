@@ -5,7 +5,7 @@ class AuthStore {
   @observable authToken;
   @observable user;
   @observable accounts;
-  @observable userInfo;
+  @observable userInfo = null;
   @observable moneyTransferList = null;
 
   // constructor() {
@@ -33,7 +33,7 @@ class AuthStore {
         console.log(err);
         return err;
       });
-    Api.Auth.updateUserList({tc: id})
+    await Api.Auth.updateUserList({tc: id})
       .then(res => {
         this.userInfo = res[0];
       })

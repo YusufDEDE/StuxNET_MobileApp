@@ -32,10 +32,11 @@ class PayBillPopup extends Component {
     const {user, setAccountList} = this.props.authStore;
     const {item} = this.props;
     const value = accounts[account].Balance;
-    console.log('area', item.Area);
     this.setState({loading: true});
+
     value < item.Debt
-      ? Alert.alert('Ödeme İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.')
+      ? Alert.alert('Ödeme İşlemi Başarısız.', 'Bakiyeniz Yetersiz!.') ||
+        this.setState({loading: false})
       : Api.Auth.paymentBank({
           accNo: accounts[account].accNo,
           additNo: accounts[account].additionalNo,
