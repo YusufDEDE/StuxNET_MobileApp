@@ -1,6 +1,6 @@
 /* eslint-disable react/no-did-mount-set-state */
 import React from 'react';
-import {View, Text, SafeAreaView} from 'react-native';
+import {View, Text, SafeAreaView, ScrollView} from 'react-native';
 import colors from 'res/colors';
 import Icon from 'react-native-vector-icons/Feather';
 import Avatar from 'rn-colorful-avatar';
@@ -40,6 +40,7 @@ class DrawerContent extends React.Component {
   render() {
     const {name, surname} = this.state;
     return (
+      <ScrollView>
       <SafeAreaView style={styles.container}>
         <View style={styles.topDrawer}>
           <Avatar circle={true} size={60} name={name} lang="tr-TR" />
@@ -104,6 +105,7 @@ class DrawerContent extends React.Component {
           </Collapse>
         </View>
       </SafeAreaView>
+      </ScrollView>
     );
   }
 }
@@ -114,6 +116,7 @@ const styles = ScaledSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.white,
+    marginBottom: 50,
   },
   topDrawer: {
     paddingHorizontal: '25@s',
