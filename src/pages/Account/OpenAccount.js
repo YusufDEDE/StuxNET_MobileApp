@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import React from 'react';
-import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
+import {View, StyleSheet, StatusBar, Picker, Text, Alert, ActivityIndicator} from 'react-native';
 import {Button} from 'react-native-elements';
 import {fonts, colors} from 'res';
 import {inject, observer} from 'mobx-react';
@@ -10,19 +10,31 @@ import {Actions} from 'react-native-router-flux';
 @inject('authStore')
 @observer
 class OpenAccount extends React.Component {
+  state={
+    loading: false,
+  }
   onPress = () => {
     const {user, setAccountList} = this.props.authStore;
+    this.setState({
+      loading: true,
+    });
     Api.Auth.newAccount({
       tc: user,
     })
       .then(res => {
         setAccountList(user);
+        this.setState({
+          loading: false,
+        });
         Alert.alert(
           'Hesap Oluştuma Başarılı!', 'Bankamızı kullandığınız için teşekkürler.',  [{text: 'TAMAM', onPress: () => Actions.pop()}]
         );
       })
       .catch(err => {
-        Alert.alert('giriş başarısız.', 'takrar deneyiniz..');
+        this.setState({
+          loading: false,
+        });
+        Alert.alert('Hesap açma işlemi başarısız.', 'takrar deneyiniz..');
         console.log(err);
       });
   };
@@ -41,7 +53,12 @@ class OpenAccount extends React.Component {
             </Picker>
           </View>
         </View>
-        <Button title={'Yeni Hesap Oluştur'} onPress={this.onPress} />
+        <View>
+        {this.state.loading ? (
+            <ActivityIndicator color={'blue'} size="large" />
+          ) : (
+        <Button title={'Yeni Hesap Oluştur'} onPress={this.onPress} />)}
+        </View>
       </View>
     );
   }

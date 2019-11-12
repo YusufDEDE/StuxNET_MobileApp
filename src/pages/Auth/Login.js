@@ -131,7 +131,7 @@ class Login extends React.Component {
               </View>
               <TouchableOpacity
                 style={styles.forgotPass}
-                onPress={() => console.warn('yeni hesap aç')}>
+                onPress={() => Actions.signup()}>
                 <Text style={{color: 'red'}}>Şifremi Unuttum</Text>
               </TouchableOpacity>
             </React.Fragment>

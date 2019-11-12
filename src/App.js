@@ -58,12 +58,13 @@ export default class App extends React.Component {
           tintColor={colors.headerTint}
           headerTintColor={colors.headerTint}>
           <Lightbox key="lightbox" hideNavBar>
-            <Stack key="main" hideNavBar>
+            <Stack key="main" hideNavBar type="reset">
               <Tabs
                 key={'auth'}
                 icon={TabIcon}
                 showLabel={false}
-                type="replace">
+                type="reset"
+                initial>
                 <Scene
                   key={'login'}
                   component={Login}

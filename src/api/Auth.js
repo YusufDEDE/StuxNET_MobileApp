@@ -71,3 +71,14 @@ export function payment(data) {
 export function paymentReq(data) {
   return request('post', 'pay', data, true);
 }
+
+export function exchangeRates() {
+  return new Promise((resolve, reject) => {
+    fetch('https://api.exchangeratesapi.io/latest?base=TRY')
+      .then(response => response.json())
+      .then(data => {
+        resolve(data);
+      })
+      .catch(err => reject(err));
+  });
+}

@@ -1,7 +1,15 @@
 /* eslint-disable comma-dangle */
 /* eslint-disable react/no-did-mount-set-state */
 import React from 'react';
-import {View, StyleSheet, StatusBar, Picker, Text, Alert} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  StatusBar,
+  Picker,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import {Button} from 'react-native-elements';
 import {fonts, colors} from 'res';
 import {inject, observer} from 'mobx-react';
@@ -14,6 +22,7 @@ class CloseAccount extends React.Component {
   state = {
     accounts: [],
     account: -1,
+    loading: false,
   };
   componentDidMount() {
     const {accounts} = this.props.authStore;
@@ -31,12 +40,13 @@ class CloseAccount extends React.Component {
         'İşleme devam etmek için lütfen hesap seçiniz..',
       );
     } else {
+      this.setState({loading: true});
       Api.Auth.deleteAccount({
         tc: user,
         additNo: accounts[account].additionalNo,
       })
         .then(res => {
-          console.log('del' + res);
+          this.setState({loading: false});
           Alert.alert(
             'Hesap Kapatıldı.',
             'Bankamızı kullandığınız için teşekkürler.',
@@ -45,7 +55,11 @@ class CloseAccount extends React.Component {
           setAccountList(user);
         })
         .catch(err => {
-          Alert.alert('işlem başarısız.', 'takrar deneyiniz..');
+          this.setState({loading: false});
+          Alert.alert(
+            'işlem başarısız.',
+            'Hesapta bakiye mevcutken hesap kapatamazsınız.',
+          );
           console.log(err);
         });
     }
@@ -76,7 +90,7 @@ class CloseAccount extends React.Component {
   }
 
   render() {
-    const {accounts, account} = this.state;
+    const {accounts, account, loading} = this.state;
     return (
       <View style={styles.container}>
         <StatusBar barStyle="dark-content" />
@@ -98,7 +112,13 @@ class CloseAccount extends React.Component {
             </Picker>
           </View>
         </View>
-        <Button title={'Hesabı Kapat'} onPress={this.onPress} />
+        <View>
+          {loading ? (
+            <ActivityIndicator color={'blue'} size="large" />
+          ) : (
+            <Button title={'Hesabı Kapat'} onPress={this.onPress} />
+          )}
+        </View>
       </View>
     );
   }

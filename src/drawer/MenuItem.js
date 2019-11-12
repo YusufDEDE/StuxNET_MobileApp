@@ -14,7 +14,9 @@ export default class MenuItem extends Component {
     };
   }
   onPress = () => {
-    Actions.jump(this.props.scene);
+    this.props.type === 'reset'
+      ? Actions[this.props.scene]({type: 'reset'})
+      : Actions.jump(this.props.scene);
   };
 
   render() {
