@@ -100,8 +100,7 @@ const styles = StyleSheet.create({
     color: colors.secondaryDark,
     marginBottom: 50,
     marginHorizontal: 30,
-    alignSelf: 'center',
-    alignContent: 'center',
+    textAlign: 'center',
   },
   ratesItem: {
     flexDirection: 'row',
